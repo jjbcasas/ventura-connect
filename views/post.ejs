@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+
+    <header>
+
+        <div class="navbar bg-base-100 shadow-sm">
+            <div class="flex-1 w-1/2">
+              <a href="/feed" class="btn btn-ghost text-xl">Ventura Connect</a>
+            </div>
+            <div class="flex justify-end  w-1/2">
+            
+            <!-- Header Avatar -->
+            <% if ( user.profileImage ) {%>
+                <div class="avatar p-2">
+                    <div class="w-10 rounded-full mx-auto">
+                        <img src="<%= user.profileImage %>" />
+                    </div>
+                </div>
+            <%} else {%>
+                <div class="avatar avatar-placeholder p-2">
+                    <div class="bg-neutral text-neutral-content w-10 rounded-full mx-auto">
+                        <span class="text-3xl"><%= user.userName[0].split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                    </div>
+                </div>
+            <%}%>
+                <ul class="menu menu-horizontal px-1">
+                    <li><a href="/feed">Feed</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </header>
+    
+    <div class="flex flex-wrap justify-evenly">
+        
+        <div class="w-1/4 pt-4 pb-4">
+
+            <!-- Profile Image -->
+            <% if ( post[0].user.profileImage ) {%>
+                <div class="avatar w-full">
+                    <div class="w-20 rounded-full mx-auto">
+                        <img src="<%= post[0].user.profileImage %>" />
+                    </div>
+                </div>
+            <!-- No Profile Image -->
+            <%} else {%>
+                <div class="avatar avatar-placeholder w-full">
+                    <div class="bg-neutral text-neutral-content w-20 rounded-full mx-auto">
+                        <span class="text-3xl"><%= post[0].userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ')  %></span>
+                    </div>
+                </div>
+            <%}%>
+                
+            <!-- Upload Button for User -->
+            <% if( post[0].user._id == user.id ) {%>
+                <details>
+                    <summary class="text-center">Change Photo</summary>
+                    <form action="/post/uploadProfilePhoto?_method=PUT" enctype="multipart/form-data" method="POST" class="bg-base-100 rounded-t-none p-2">
+                        <div>
+                            <input type="file" name="file" class="file-input">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-neutral mt-4">Upload</button>
+                        </div>
+                    </form>
+                </details>
+            <%} else {%>
+
+                <!-- for follow and unfollow button -->
+                 
+                <% if ( post[0].user.followerId.length == 0 ) {%>
+                <!-- this does not works too  if ( accountUser[0].followerId !== user.id ) -->
+                <!-- this does not work (!accountUser[0].followerId) -->
+                    <div class="w-1/4 mx-auto">
+                        <form action="/post/followUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
+                            <button class="btn btn-soft btn-primary w-full" type="submit">Follow</button>
+                        </form>
+                    </div>
+                <% } else { %>
+                    <% let isFollowing = false %>
+                    <% for ( var i = 0; i < post[0].user.followerId.length; i++) { %>
+                        <% if ( post[0].user.followerId[i].toString() == user._id.toString() ) { %>
+                            <%isFollowing = true%>
+                            <%break%>
+                        <%}%>
+                    <%}%>
+
+                    <% if ( isFollowing ) {%>
+                            <div class="w-1/4 mx-auto">
+                                <form action="/post/unfollowUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
+                                    <button class="btn btn-soft btn-primary w-full" type="submit">Unfollow</button>
+                                </form>
+                            </div>
+                    <% } else { %>
+                        <div class="w-1/4 mx-auto">
+                            <form action="/post/followUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
+                                <button class="btn btn-soft btn-primary w-full" type="submit">Follow</button>
+                            </form>
+                        </div>
+                    <% } %>
+
+                <%}%>
+            
+            <%}%>
+            <!-- Profile Details of Users without Post -->
+            <% if ( !post[0] ){ %>
+                <p class="text-center"><strong>User Name</strong>: <%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
+                <% if( post[0].user._id == user.id ) {%>
+                    <p class="text-center"><strong>Email</strong>: <%= post[0].user.email %></p>
+                <%}%>
+            <%} else {%>
+            <!-- Profile Details of Users with Post -->
+                <p class="text-center"><strong>User Name</strong>: <%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
+                <% if( post[0].user._id == user.id ) {%>
+                    <p class="text-center"><strong>Email</strong>: <%= post[0].user.email %></p>
+                <%}%>
+            <%}%>
+
+            <!-- Uploading Section for user -->
+            <% if( post[0].user._id == user.id ) {%>
+                <h2 class="pt-4 text-center">Add a post</h2>
+                <fieldset class="fieldset w-xs bg-base-200 border border-base-300 p-4 rounded-box mx-auto">
+                    <form action="/post/createPost/<%= post[0].user._id %>" enctype="multipart/form-data" method="POST">
+                        <div>
+                            <label for="title" class="fieldset-label">Title</label>
+                            <input type="text" class="input" name="title" id="title">
+                        </div>
+                        <div>
+                            <label for="caption" class="fieldset-label">Caption</label>
+                            <textarea name="caption" class="input pt-2" id="caption"></textarea>
+                        </div>
+                        <div>
+                            <label for="imageUpload" class="fieldset-legend">Image</label>
+                            <input type="file" name="file" id="imageUpload" class="file-input">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-neutral mt-4">Upload</button>
+                        </div>
+                        <!-- <input type="submit" value="Upload" class="btn btn-neutral mt-4"> -->
+                    </form>
+                </fieldset>
+            <% } %>
+        </div>
+
+        
+
+            <div class="w-2/4 pt-4">
+                <!-- Profile Feed for users with post-->
+        
+                    <ul>
+                    <!-- Post Feed -->
+                    
+                        <li class="card bg-base-100 w-96 shadow-sm w-full mb-4" id="<%= post[0]._id%>">
+                            
+                            <figure>
+                                    <img src="<%= post[0].image%>"/>
+                            </figure>
+        
+                            <div class="card-body flex flex-row">
+                                <!-- for users with avatar -->
+                                <% if ( post[0].user.profileImage ) {%>
+                                    <div class="flex flex-wrap w-1/2 justify-between">
+                                        <div class="avatar w-full">
+                                            <div class="w-12 rounded-full">
+                                                <a href="/profile/<%=post[0].user._id%>">
+                                                    <img src="<%= post[0].user.profileImage %>" />
+                                                </a>
+                                            </div>
+                                            <h2 class="card-title justify-self-end py-2 pl-5"><%=post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')%></h2>
+                                        </div>
+                                    </div>
+                                <%} else {%>
+                                <!-- for users without avatar -->
+                                    <div class="flex flex-wrap w-1/2 avatar avatar-placeholder m-2">
+                                        <div class="bg-neutral text-neutral-content w-12 rounded-full ">
+                                            <a href="/profile/<%=post[0].user._id%>">
+                                                <span class="text-3xl"><%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                                            </a>    
+                                        </div>
+                                        <h2 class="card-title justify-self-end py-2 pl-5"><%=post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')%></h2>
+                                    </div>
+                                <%}%>
+        
+                                <div class="card-actions w-1/2 justify-end">
+                                    <h3 class="pt-2">Likes: <%= post[0].likes %></h3>
+                                    <% if ( user.likedPostId.includes(post[0]._id)) {%>
+                                        <form action="/post/minusLikePost/<%= post[0]._id %>?_method=PUT" method="POST">
+                                            <button type="submit" class="btn btn-primary">Unlike</button>
+                                        </form>
+                                    <%} else {%>
+                                            <form action="/post/likePost/<%= post[0]._id %>?_method=PUT" method="POST">
+                                                <button type="submit" class="btn btn-primary">Like</button>
+                                            </form>
+                                    <%}%>
+                                    <!-- Delete button for login users only -->
+                                    <% if (post[0].user == user.id){ %>
+                                        <form action="/post/deletePost/<%= post[0]._id%>?_method=DELETE" method="POST">
+                                            <button type="submit" class="btn btn-primary">Delete</button>
+                                        </form>
+                                    <%}%>
+                                </div>
+        
+                            </div>
+        
+                            <div class="flex flex-wrap w-1/2 pl-6">
+                                <div class="w-full">
+                                    <h2 class="card-title"><%=post[0].title%></h2>
+                                    <p><%=post[0].caption%></p>
+                                </div>
+                            </div>
+        
+                            <!-- Comments Section -->
+                            <div class="py-2 px-6">
+                                <h2 class="pt-4">Comments</h2>
+                                <form action="/post/comments/<%= post[0]._id %>" method="POST">
+                                    <input type="text" class="w-full mb-2 pl-1" name="comment" placeholder="write comments here...">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
+                                <ul>
+                                    <% let postComments = comments.filter( comment => comment.postId.toString() === post[0]._id.toString() ) %>
+                                    <% postComments.forEach(comment=> { %>
+                                        <li class="flex py-2">
+        
+                                            <!-- Avatar of each comment -->
+                                            <% if ( comment.commentUser.profileImage ) {%>
+                                                <div class="w-1/8">
+                                                    <div class="avatar w-full my-5">
+                                                        <div class="w-12 rounded-full mx-auto">
+                                                            <img src="<%= comment.commentUser.profileImage %>" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <%} else {%>
+                                            <!-- for comments without avatar -->
+                                                <div class="w-1/8">
+                                                    <div class="avatar avatar-placeholder w-full my-5">
+                                                        <div class="bg-neutral text-neutral-content w-12 rounded-full mx-auto">
+                                                            <span class="text-3xl"><%= comment.commentUser.userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <%}%>
+        
+                                            <div class="card bg-base-100 w-7/8 shadow-sm">
+                                                <div class="card-body">
+                                                    <p><strong><%= comment.commentUser.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></strong><p>
+                                                    <span><%= comment.comment %></span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    <%})%>
+                                    
+                                </ul>
+                            </div>
+                        </li>
+                    
+                    </ul>
+                </div>
+
+        
+
+        <div class="w-1/4 px-2">
+        
+            <!-- Friends List Section of User -->
+            <% if ( post[0].user._id == user.id ) { %>
+                <h3 class="text-center pt-4"><strong>My Friends</strong></h3>
+                <div class="card w-full bg-base-100 card-xs shadow-sm">
+                    <div class="card-body">
+                    <!-- if without friends yet -->
+                    <% if ( post[0].user.followingId.length == 0 ) { %>
+                        <h3 class="text-center">No Friends yet</h3>
+                    <% } else { %>
+                    <!-- if with friends -->
+                        <ul class="flex flex-wrap">
+                        <% post[0].user.followingId.forEach( following => { %>
+                            <% if ( following.profileImage ) { %>
+                                <li>   
+                                    <div class="avatar w-full p-2">
+                                        <div class="w-12 rounded-full">
+                                            <a href="/profile/<%= following._id %>">
+                                                <img src="<%= following.profileImage %>" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            <% } else { %>
+                                <li>
+                                    <div class="avatar avatar-placeholder w-full p-2">
+                                        <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                                            <a href="/profile/<%= following._id %>">
+                                                <span class="text-3xl"><%= following.userName.split(' ').map(word => word.charAt(0).toUpperCase()) %></span>
+                                            </a>
+                                        </div>
+                                        </a>
+                                    </div>
+                                </li>
+                            <% } %>
+                        <%})%>
+                        </ul>
+                    <%}%>
+                    </div>
+                </div>
+            
+            <!-- Friends List Section of Diff Account User -->
+            <% } else { %>
+                <h3 class="text-center pt-4"><strong><%= post[0].user.userName %>'s Friends</strong></h3>
+                <div class="card w-full bg-base-100 card-xs shadow-sm">
+                    <div class="card-body">
+                    <!-- if without friends yet -->
+                    <% if ( !post[0].user.followingId ) { %>
+                        <h3 class="text-center">No Friends yet</h3>
+                    <% } else { %>
+                    <!-- if with friends -->
+                        <ul class="flex flex-wrap">
+                            
+                        <% post[0].user.followingId.forEach( following => { %>
+                            <% if ( following.profileImage ) { %>
+                                <li>   
+                                    <div class="avatar w-full p-2">
+                                        <div class="w-12 rounded-full">
+                                            <a href="/profile/<%= following._id %>">
+                                                <img src="<%= following.profileImage %>" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            <% } else { %>
+                                <li>
+                                    <div class="avatar avatar-placeholder w-full p-2">
+                                        <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                                            <a href="/profile/<%= following._id %>">
+                                                <span class="text-3xl"><%= following.userName.split(' ').map(word => word.charAt(0).toUpperCase()) %></span>
+                                            </a>    
+                                        </div>
+                                    </div>
+                                </li>
+                            <% } %>
+                        <%})%>
+                        </ul>
+                    <%}%>
+                    </div>
+                </div>
+            <%}%>
+            </div>
+        </div>
+    
+        <footer class="footer sm:footer-horizontal bg-neutral text-neutral-content items-center p-4">
+        <aside class="grid-flow-col items-center">
+          <svg
+            width="36"
+            height="36"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            class="fill-current">
+            <path
+              d="M22.672 15.226l-2.432.811.841 2.515c.33 1.019-.209 2.127-1.23 2.456-1.15.325-2.148-.321-2.463-1.226l-.84-2.518-5.013 1.677.84 2.517c.391 1.203-.434 2.542-1.831 2.542-.88 0-1.601-.564-1.86-1.314l-.842-2.516-2.431.809c-1.135.328-2.145-.317-2.463-1.229-.329-1.018.211-2.127 1.231-2.456l2.432-.809-1.621-4.823-2.432.808c-1.355.384-2.558-.59-2.558-1.839 0-.817.509-1.582 1.327-1.846l2.433-.809-.842-2.515c-.33-1.02.211-2.129 1.232-2.458 1.02-.329 2.13.209 2.461 1.229l.842 2.515 5.011-1.677-.839-2.517c-.403-1.238.484-2.553 1.843-2.553.819 0 1.585.509 1.85 1.326l.841 2.517 2.431-.81c1.02-.33 2.131.211 2.461 1.229.332 1.018-.21 2.126-1.23 2.456l-2.433.809 1.622 4.823 2.433-.809c1.242-.401 2.557.484 2.557 1.838 0 .819-.51 1.583-1.328 1.847m-8.992-6.428l-5.01 1.675 1.619 4.828 5.011-1.674-1.62-4.829z"></path>
+          </svg>
+          <p>Copyright © 2025 - All right reserved</p>
+        </aside>
+      </footer>
+    
+    </body>
+    </html>

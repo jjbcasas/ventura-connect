@@ -10,5 +10,7 @@ router.put('/likePost/:id', feedController.likePost)
 router.put('/minusLike/:id', feedController.minusLike)
 router.delete('/deletePost/:id', feedController.deletePost)
 router.post('/comments/:id', feedController.createComment)
+router.put('/followUser/:id', feedController.followUser)
+router.put('/unfollowUser/:id', feedController.unfollowUser)
 
 module.exports = router

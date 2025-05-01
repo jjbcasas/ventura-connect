@@ -3,19 +3,23 @@ const Post = require('../models/Post')
 const User = require('../models/User')
 const Comment = require('../models/Comment')
 
-// Upload an image
 module.exports = {
-    getProfile: async( req, res ) => {
+    getPost: async(req, res) => {
         try {
-            const posts = await Post.find({ user: req.params.id }).sort({ createdAt: 'desc'}).lean()
-            const accountUser = await User.find({ _id: req.params.id }).populate('followingId').sort({ createdAt: 'desc'}).lean()
-            const comments = await Comment.find().populate({
+            const post = await Post.find({ _id: req.params.id }).populate({
+                path: 'user',
+                    populate: {
+                        path: 'followingId'
+                    }
+            }).sort({ createdAt: 'desc'}).lean()
+            // const accountUser = await User.find({ _id: req.params.id }).populate('followingId').sort({ createdAt: 'desc'}).lean()
+            const comments = await Comment.find({ postId: req.params.id}).populate({
                 path: 'commentUser'
             })
             .sort({ createdAt: 'desc'}).lean()
-            const usersFriends = await User.find({ _id: req.user.id }).populate('followingId').sort({ createdAt: 'desc'}).lean()
-            res.render('profile.ejs', { posts: posts, user: req.user, accountUser: accountUser, comments: comments, usersFriends: usersFriends})
-            // console.log(comments)
+            // const usersFriends = await User.find({ _id: req.user.id }).populate('followingId').sort({ createdAt: 'desc'}).lean()
+            res.render('post.ejs', { post: post, user: req.user, comments: comments/* accountUser: accountUser, usersFriends: usersFriends*/})
+            console.log(post[0].user)
         } catch (error) {
             console.log(error)
         }
@@ -23,7 +27,7 @@ module.exports = {
     createPost: async ( req, res ) => { 
         try{
             const uploadResult = await cloudinary.uploader.upload(req.file.path)
-
+    
             await Post.create({
                 title: req.body.title,
                 image: uploadResult.secure_url,
@@ -35,9 +39,9 @@ module.exports = {
             })
                 console.log('Post has been added!')
                 res.redirect(`/profile/${req.user.id}`)
-            } catch(error) {
-                console.log(error);
-            };
+        } catch(error) {
+            console.log(error);
+        };
     },
     likePost: async( req, res ) => {
         try {
@@ -54,7 +58,7 @@ module.exports = {
                 }
             )
             console.log('Likes +1')
-            res.redirect(`/profile/${post.user}#${req.params.id}`)
+            res.redirect(`/post/${post._id}`)
         } catch (error) {
             console.log(error)
         }
@@ -74,7 +78,7 @@ module.exports = {
                 }
             )
             console.log(' Likes -1')
-            res.redirect(`/profile/${post.user}#${req.params.id}`)
+            res.redirect(`/post/${post._id}`)
         } catch (error) {
             console.log(error)
         }
@@ -82,36 +86,17 @@ module.exports = {
     deletePost: async ( req, res ) => {
         try {
             let post = await Post.findById({ _id: req.params.id})
-
+    
             await cloudinary.uploader.destroy(post.cloudinaryId)
-
+    
             await Post.deleteOne({ _id: req.params.id })
-
+    
             console.log('Deleted Post')
-            res.redirect(`/profile/${req.user.id}`)
+            res.redirect(`/post`)
         } catch (error) {
             console.log(error)
-            res.redirect(`/profile/${req.user.id}`)
+            res.redirect(`/post/${req.params.id}`)
         }
-    },
-    uploadProfilePhoto: async ( req, res ) => {
-        try{
-            const uploadResult = await cloudinary.uploader.upload(req.file.path)
-
-            await User.findOneAndUpdate(
-                { _id: req.user.id },
-                {
-                    $set: {
-                        profileImage: uploadResult.secure_url,
-                        cloudinaryId: uploadResult.public_id
-                    }
-                }
-            )
-                console.log('Profile Photo has been added!')
-                res.redirect(`/profile/${req.user.id}`)
-            } catch(error) {
-                console.log(error);
-            };
     },
     followUser: async ( req, res ) => {
         try {
@@ -133,7 +118,7 @@ module.exports = {
                 }
             )
             console.log('Followed a user')
-            res.redirect(`/profile/${req.params.id}`)
+            res.redirect(`/post/${req.params.id}`)
         } catch (error) {
             console.log(error)
         }
@@ -157,7 +142,7 @@ module.exports = {
                 }
             )
             console.log('Unfollowed a user')
-            res.redirect(`/profile/${req.params.id}`)
+            res.redirect(`/post/${req.params.id}`)
         } catch (error) {
             console.log(error)
         }
@@ -170,10 +155,8 @@ module.exports = {
                 commentUserName: req.user.userName,
                 postId: req.params.id
             })
-            const post = await Post.find({ _id: req.params.id }).sort({ createdAt: 'desc'}).lean()
             console.log('Comment has been added')
-            res.redirect(`/profile/${post[0].user}`)
-            console.log(post[0].user)
+            res.redirect(`/profile/${req.params.id}`)
         } catch (error) {
             console.log(error)
         }

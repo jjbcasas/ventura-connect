@@ -18,19 +18,39 @@
             <div class="flex justify-end  w-1/2">
             
             <!-- Header Avatar -->
-            <% if ( user.profileImage ) {%>
-                <div class="avatar p-2">
-                    <div class="w-10 rounded-full mx-auto">
-                        <img src="<%= user.profileImage %>" />
+            <% if( accountUser[0].id !== user.id ) { %>
+                <% if ( user.profileImage ) {%>
+                    <div class="avatar p-2">
+                        <div class="w-10 rounded-full mx-auto">
+                            <a href="/profile/<%=user.id%>">
+                                <img src="<%= user.profileImage %>" />
+                            </a>
+                        </div>
                     </div>
-                </div>
-            <%} else {%>
-                <div class="avatar avatar-placeholder p-2">
-                    <div class="bg-neutral text-neutral-content w-10 rounded-full mx-auto">
-                        <span class="text-3xl"><%= user.userName[0].split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                <%} else {%>
+                    <div class="avatar avatar-placeholder p-2">
+                        <a href="/profile/<%=user.id%>">
+                            <div class="bg-neutral text-neutral-content w-10 rounded-full mx-auto">
+                                <span class="text-3xl"><%= user.userName[0].split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            <%}%>
+                <%}%>
+            <% } else { %>
+                <% if ( user.profileImage ) {%>
+                    <div class="avatar p-2">
+                        <div class="w-10 rounded-full mx-auto">
+                            <img src="<%= user.profileImage %>" />
+                        </div>
+                    </div>
+                <%} else {%>
+                    <div class="avatar avatar-placeholder p-2">
+                        <div class="bg-neutral text-neutral-content w-10 rounded-full mx-auto">
+                            <span class="text-3xl"><%= user.userName[0].split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                        </div>
+                    </div>
+                <%}%>
+            <% } %>
                 <ul class="menu menu-horizontal px-1">
                     <li><a href="/feed">Feed</a></li>
                     <li><a href="/logout">Logout</a></li>
@@ -58,7 +78,7 @@
                     <% if ( !posts[0] ){ %>
                         <span class="text-3xl"><%= accountUser.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></span>
                     <%} else {%>
-                        <span class="text-3xl"><%= posts[0].userName %></span>
+                        <span class="text-3xl"><%= posts[0].userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ')  %></span>
                     <%}%>
                     </div>
                 </div>
@@ -78,57 +98,60 @@
                     </form>
                 </details>
             <%} else {%>
-
-                <!-- for follow and unfollow button -->
+            <!-- follow and unfollow button for different user profile -->
                  
                 <% if ( accountUser[0].followerId.length == 0 ) {%>
                 <!-- this does not works too  if ( accountUser[0].followerId !== user.id ) -->
                 <!-- this does not work (!accountUser[0].followerId) -->
-                    <div class="w-1/4 mx-auto">
+                    <div class="w-20 mx-auto">
                         <form action="/profile/followUser/<%=accountUser[0]._id%>?_method=PUT" method="POST" >
                             <button class="btn btn-soft btn-primary w-full" type="submit">Follow</button>
                         </form>
                     </div>
                 <% } else { %>
-                    <% for ( var i = 0; i < accountUser[0].followerId.length; i++) { %>
 
-                        <% if ( accountUser[0].followerId[i] == user.id ) { %>
-                            <div class="w-1/4 mx-auto">
+                    <% let isFollowing = false %>
+                    <% for ( var i = 0; i < accountUser[0].followerId.length; i++) { %>
+                        <% if ( accountUser[0].followerId[i].toString() == user._id.toString() ) { %>
+                            <%isFollowing = true%>
+                            <%break%>
+                        <%}%>
+                    <%}%>
+
+                    <% if ( isFollowing ) {%>
+                            <div class="w-20 mx-auto">
                                 <form action="/profile/unfollowUser/<%=accountUser[0]._id%>?_method=PUT" method="POST" >
                                     <button class="btn btn-soft btn-primary w-full" type="submit">Unfollow</button>
                                 </form>
                             </div>
-                        <% } else { %>
-                            <div class="w-1/4 mx-auto">
-                                <form action="/profile/followUser/<%=accountUser[0]._id%>?_method=PUT" method="POST" >
-                                    <button class="btn btn-soft btn-primary w-full" type="submit">Follow</button>
-                                </form>
-                            </div>
-                        <% } %>
-
+                    <% } else { %>
+                        <div class="w-20 mx-auto">
+                            <form action="/profile/followUser/<%=accountUser[0]._id%>?_method=PUT" method="POST" >
+                                <button class="btn btn-soft btn-primary w-full" type="submit">Follow</button>
+                            </form>
+                        </div>
                     <% } %>
-
                 <%}%>
-            
             <%}%>
             <!-- Profile Details of Users without Post -->
             <% if ( !posts[0] ){ %>
-                <p class="text-center"><strong>User Name</strong>: <%= accountUser[0].userName %></p>
+                <p class="text-center"><strong>User Name</strong>: <%= accountUser[0].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
                 <% if( accountUser[0]._id == user.id ) {%>
                     <p class="text-center"><strong>Email</strong>: <%= accountUser[0].email %></p>
                 <%}%>
             <%} else {%>
             <!-- Profile Details of Users with Post -->
-                <p class="text-center"><strong>User Name</strong>: <%= posts[0].userName %></p>
+                <p class="text-center"><strong>User Name</strong>: <%= posts[0].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
                 <% if( accountUser[0]._id == user.id ) {%>
                     <p class="text-center"><strong>Email</strong>: <%= accountUser[0].email %></p>
                 <%}%>
             <%}%>
 
             <!-- Uploading Section for user -->
+            <% if( accountUser[0]._id == user.id ) {%>
             <h2 class="pt-4 text-center">Add a post</h2>
             <fieldset class="fieldset w-xs bg-base-200 border border-base-300 p-4 rounded-box mx-auto">
-                <form action="/profile/createPost/<%=accountUser[0].id%>" enctype="multipart/form-data" method="POST">
+                <form action="/profile/createPost" enctype="multipart/form-data" method="POST">
                     <div>
                         <label for="title" class="fieldset-label">Title</label>
                         <input type="text" class="input" name="title" id="title">
@@ -147,6 +170,7 @@
                     <!-- <input type="submit" value="Upload" class="btn btn-neutral mt-4"> -->
                 </form>
             </fieldset>
+            <% } %>
         </div>
         
         <div class="w-2/4 pt-4">
@@ -160,51 +184,45 @@
             <!-- Post Feed -->
             <% for(var i = 0; i < posts.length; i ++) { %>
                 <li class="card bg-base-100 w-96 shadow-sm w-full mb-4" id="<%= posts[i]._id%>">
-                    <!-- for users with avatar -->
-                    <% if ( accountUser[0].profileImage ) {%>
-                        <div class="flex justify-between">
-                            <div class="avatar w-1/2 m-2">
-                                <div class="w-12 rounded-full">
-                                    <img src="<%= accountUser[0].profileImage %>" />
-                                </div>
-                                <h2 class="card-title justify-self-end py-2 pl-5"><%=posts[i].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')%></h2>
-                            </div>
-                            <div class="mt-3 mr-2">
-                                <form action="" class="justify-end">
-                                    <button class="btn btn-soft btn-primary">Follow</button>
-                                </form>
-                            </div>
-                        </div>
-                    <%} else {%>
-                    <!-- for users without avatar -->
-                        <div class="avatar avatar-placeholder w-full m-2">
-                            <div class="bg-neutral text-neutral-content w-12 rounded-full ">
-                                <span class="text-3xl"><%= posts[0].userName %></span>
-                            </div>
-                            <h2 class="card-title justify-self-end py-2 pl-5"><%=posts[i].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')%></h2>
-                        </div>
-                    <%}%>
-
+                    
                     <figure>
-                        <a href="/profile/<%= posts[i]._id%>">
+                        <a href="/post/<%= posts[i]._id%>">
                             <img src="<%= posts[i].image%>"/>
                         </a>
                     </figure>
 
                     <div class="card-body flex flex-row">
-
-                        <div class="flex flex-wrap w-1/2">
-                            <div class="w-full">
-                                <h2 class="card-title"><%=posts[i].title%></h2>
-                                <p><%=posts[i].caption%></p>
+                        <!-- for users with avatar -->
+                        <% if ( accountUser[0].profileImage ) {%>
+                            <div class="flex flex-wrap w-1/2 justify-between">
+                                <div class="avatar w-full">
+                                    <div class="w-12 rounded-full">
+                                        <img src="<%= accountUser[0].profileImage %>" />
+                                    </div>
+                                    <h2 class="card-title justify-self-end py-2 pl-5"><%=posts[i].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')%></h2>
+                                </div>
                             </div>
-                        </div>
+                        <%} else {%>
+                        <!-- for users without avatar -->
+                            <div class="flex flex-wrap w-1/2 avatar avatar-placeholder m-2">
+                                <div class="bg-neutral text-neutral-content w-12 rounded-full ">
+                                    <span class="text-3xl"><%= posts[0].userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                                </div>
+                                <h2 class="card-title justify-self-end py-2 pl-5"><%=posts[i].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')%></h2>
+                            </div>
+                        <%}%>
 
                         <div class="card-actions w-1/2 justify-end">
                             <h3 class="pt-2">Likes: <%= posts[i].likes %></h3>
-                            <form action="/profile/likePost/<%= posts[i]._id%>?_method=PUT" method="POST">
-                                <button type="submit" class="btn btn-primary">Like</button>
-                            </form>
+                            <% if ( user.likedPostId.includes(posts[i]._id)) {%>
+                                <form action="/profile/minusLikePost/<%= posts[i]._id %>?_method=PUT" method="POST">
+                                    <button type="submit" class="btn btn-primary">Unlike</button>
+                                </form>
+                            <%} else {%>
+                                    <form action="/profile/likePost/<%= posts[i]._id %>?_method=PUT" method="POST">
+                                        <button type="submit" class="btn btn-primary">Like</button>
+                                    </form>
+                            <%}%>
 
                             <!-- Delete button for login users only -->
                             <% if (posts[i].user == user.id){ %>
@@ -216,19 +234,51 @@
 
                     </div>
 
+                    <div class="flex flex-wrap w-1/2 pl-6">
+                        <div class="w-full">
+                            <h2 class="card-title"><%=posts[i].title%></h2>
+                            <p><%=posts[i].caption%></p>
+                        </div>
+                    </div>
+
                     <!-- Comments Section -->
                     <div class="py-2 px-6">
-                        <h3>Comments</h3>
-                        <form action="">
-                            <input type="text" class="w-full mb-2 pl-1" placeholder="write comments here...">
+                        <h2 class="pt-4">Comments</h2>
+                        <form action="/profile/comments/<%= posts[i]._id %>" method="POST">
+                            <input type="text" class="w-full mb-2 pl-1" name="comment" placeholder="write comments here...">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
                         <ul>
                             <% let postComments = comments.filter( comment => comment.postId.toString() === posts[i]._id.toString() ) %>
                             <% postComments.forEach(comment=> { %>
-                                <li class="py-2">
-                                    <p><strong><%= comment.commentUserName %></strong><p>
-                                    <span><%= comment.comment %></span>
+                                <li class="flex py-2">
+
+                                    <!-- Avatar of each comment -->
+                                    <% if ( comment.commentUser.profileImage ) {%>
+                                        <div class="w-1/8">
+                                            <div class="avatar w-full my-5">
+                                                <div class="w-12 rounded-full mx-auto">
+                                                    <img src="<%= comment.commentUser.profileImage %>" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <%} else {%>
+                                    <!-- for comments without avatar -->
+                                        <div class="w-1/8">
+                                            <div class="avatar avatar-placeholder w-full my-5">
+                                                <div class="bg-neutral text-neutral-content w-12 rounded-full mx-auto">
+                                                    <span class="text-3xl"><%= comment.commentUser.userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <%}%>
+
+                                    <div class="card bg-base-100 w-7/8 shadow-sm">
+                                        <div class="card-body">
+                                            <p><strong><%= comment.commentUser.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></strong><p>
+                                            <span><%= comment.comment %></span>
+                                        </div>
+                                    </div>
                                 </li>
                             <%})%>
                             
@@ -240,23 +290,27 @@
         <%}%>
         </div>
 
-        <div class="w-1/4">
-            <h3 class="text-center pt-4"><strong>Friends</strong></h3>
-
-            <div>
-            <!-- Friends List Section -->
+        <div class="w-1/4 px-2">
+        
+        <!-- Friends List Section of User -->
+        <% if ( accountUser[0]._id == user.id ) { %>
+            <h3 class="text-center pt-4"><strong>My Friends</strong></h3>
+            <div class="card w-full bg-base-100 card-xs shadow-sm">
+                <div class="card-body">
+                <!-- if without friends yet -->
                 <% if ( user.followingId.length == 0 ) { %>
                     <h3 class="text-center">No Friends yet</h3>
                 <% } else { %>
-
+                <!-- if with friends -->
                     <ul class="flex flex-wrap">
-                        
                     <% usersFriends[0].followingId.forEach( following => { %>
                         <% if ( following.profileImage ) { %>
                             <li>   
                                 <div class="avatar w-full p-2">
                                     <div class="w-12 rounded-full">
-                                        <img src="<%= following.profileImage %>" />
+                                        <a href="/profile/<%= following._id %>">
+                                            <img src="<%= following.profileImage %>" />
+                                        </a>
                                     </div>
                                 </div>
                             </li>
@@ -264,7 +318,50 @@
                             <li>
                                 <div class="avatar avatar-placeholder w-full p-2">
                                     <div class="bg-neutral text-neutral-content w-12 rounded-full">
-                                        <span class="text-3xl"><%= following.userName.split(' ').map(word => word.charAt(0).toUpperCase()) %></span>
+                                        <a href="/profile/<%= following._id %>">
+                                            <span class="text-3xl"><%= following.userName.split(' ').map(word => word.charAt(0).toUpperCase()) %></span>
+                                        </a>
+                                    </div>
+                                    </a>
+                                </div>
+                            </li>
+                        <% } %>
+                    <%})%>
+                    </ul>
+                <%}%>
+                </div>
+            </div>
+        
+        <!-- Friends List Section of Diff Account User -->
+        <% } else { %>
+            <h3 class="text-center pt-4"><strong><%= accountUser[0].userName %>'s Friends</strong></h3>
+            <div class="card w-full bg-base-100 card-xs shadow-sm">
+                <div class="card-body">
+                <!-- if without friends yet -->
+                <% if ( !accountUser[0].followingId ) { %>
+                    <h3 class="text-center">No Friends yet</h3>
+                <% } else { %>
+                <!-- if with friends -->
+                    <ul class="flex flex-wrap">
+                        
+                    <% accountUser[0].followingId.forEach( following => { %>
+                        <% if ( following.profileImage ) { %>
+                            <li>   
+                                <div class="avatar w-full p-2">
+                                    <div class="w-12 rounded-full">
+                                        <a href="/profile/<%= following._id %>">
+                                            <img src="<%= following.profileImage %>" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                        <% } else { %>
+                            <li>
+                                <div class="avatar avatar-placeholder w-full p-2">
+                                    <div class="bg-neutral text-neutral-content w-12 rounded-full">
+                                        <a href="/profile/<%= following._id %>">
+                                            <span class="text-3xl"><%= following.userName.split(' ').map(word => word.charAt(0).toUpperCase()) %></span>
+                                        </a>    
                                     </div>
                                 </div>
                             </li>
@@ -272,7 +369,9 @@
                     <%})%>
                     </ul>
                 <%}%>
+                </div>
             </div>
+        <%}%>
         </div>
     </div>
 
