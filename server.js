@@ -15,7 +15,11 @@ const postRoutes = require('./routes/post')
 
 require('dotenv').config({path:'./config/.env'})
 
+// Passport config
 require('./config/passport')(passport)
+
+// Passport google-oauth20 config
+require('./config/passport-oauth')(passport)
 
 connectDB()
 
@@ -30,6 +34,7 @@ app.use(logger('dev'))
 
 app.use(methodOverride('_method'))
 
+// Sessions
 app.use(
     session({
         secret: 'keyboard cat',
@@ -42,6 +47,7 @@ app.use(
     })
 )
 
+// Passport middleware
 app.use(passport.initialize())
 app.use(passport.session())
 

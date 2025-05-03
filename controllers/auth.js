@@ -2,7 +2,7 @@ const passport = require('passport')
 const validator = require('validator')
 const User = require('../models/User')
 
-exports.getLogin = (req, res) => {
+  exports.getLogin = (req, res) => {
     if (req.user) {
       return res.redirect('/feed')
     }
@@ -139,3 +139,14 @@ exports.getLogin = (req, res) => {
     //   //     res.redirect('/feed')
     //   //   })
     //   // })
+    exports.getGoogleLogin = async ( req, res) => {
+      passport.authenticate('google', { scope: ['profile', 'email'] })
+    }
+
+    exports.getGoogleLoginCallback = async ( req, res) => {
+      passport.authenticate('google', { failureRedirect: '/login' }),
+        function(req, res) {
+        // Successful authentication, redirect home.
+          res.redirect('/');
+        }
+    }

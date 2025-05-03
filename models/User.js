@@ -6,11 +6,17 @@ const UserSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
+    googleId: {
+      type: String
+    },
     email: {
         type: String,
         unique: true
     },
     password: String,
+    // displayName: {
+    //   type: String
+    // },
     followerId: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -37,6 +43,10 @@ const UserSchema = new mongoose.Schema({
     profileImage: {
       type: String
     },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
 })
 
 UserSchema.pre('save', function save(next) {
