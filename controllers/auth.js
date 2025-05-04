@@ -139,14 +139,14 @@ const User = require('../models/User')
     //   //     res.redirect('/feed')
     //   //   })
     //   // })
-    exports.getGoogleLogin = async ( req, res) => {
-      passport.authenticate('google', { scope: ['profile', 'email'] })
-    }
+    // exports.getGoogleLogin = async ( req, res) => {
+    //   passport.authenticate('google', { scope: ['profile', 'email'] })
+    // }
 
-    exports.getGoogleLoginCallback = async ( req, res) => {
-      passport.authenticate('google', { failureRedirect: '/login' }),
-        function(req, res) {
-        // Successful authentication, redirect home.
-          res.redirect('/');
-        }
-    }
+    // exports.getGoogleLoginCallback = async ( req, res) => {
+    //   passport.authenticate('google', { failureRedirect: '/login' }),
+    //     function(req, res) {
+    //     // Successful authentication, redirect home.
+    //       res.redirect('/');
+    //     }
+    // }

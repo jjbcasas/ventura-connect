@@ -12,6 +12,7 @@ const mainRoutes = require('./routes/main')
 const feedRoutes = require('./routes/feed')
 const profileRoutes = require('./routes/profile')
 const postRoutes = require('./routes/post')
+const authRoutes = require('./routes/auth')
 
 require('dotenv').config({path:'./config/.env'})
 
@@ -57,6 +58,7 @@ app.use('/',mainRoutes)
 app.use('/feed', feedRoutes)
 app.use('/profile', profileRoutes)
 app.use('/post', postRoutes)
+app.use('/auth', authRoutes)
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}, you better catch it`)
