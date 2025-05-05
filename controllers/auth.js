@@ -143,10 +143,7 @@ const User = require('../models/User')
     //   passport.authenticate('google', { scope: ['profile', 'email'] })
     // }
 
-    // exports.getGoogleLoginCallback = async ( req, res) => {
-    //   passport.authenticate('google', { failureRedirect: '/login' }),
-    //     function(req, res) {
-    //     // Successful authentication, redirect home.
-    //       res.redirect('/');
-    //     }
-    // }
+    exports.googleCallback = async ( req, res) => {
+        // Successful authentication, redirect home.
+          res.redirect('/');
+    }
