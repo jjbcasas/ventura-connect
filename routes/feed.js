@@ -4,6 +4,7 @@ const feedController = require('../controllers/feed')
 const upload = require('../middleware/multer')
 const { ensureAuth } = require('../middleware/auth')
 
+// Feed Routes
 router.get('/', ensureAuth, feedController.getFeed)
 router.post('/createPost', upload.single('file'), feedController.createPost)
 router.put('/likePost/:id', feedController.likePost)

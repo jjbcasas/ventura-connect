@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
+    // for Google Sign In
     googleId: {
       type: String
     },
@@ -14,14 +15,10 @@ const UserSchema = new mongoose.Schema({
         unique: true
     },
     password: String,
-    // displayName: {
-    //   type: String
-    // },
     followerId: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            // required: true
         }
     ],
     followingId: [
@@ -49,6 +46,7 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
+// Password hash middleware
 UserSchema.pre('save', function save(next) {
   const user = this
   if (!user.isModified('password')) { return next() }

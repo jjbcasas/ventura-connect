@@ -8,20 +8,20 @@ module.exports = function(passport){
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: 'http://localhost:2121/auth/google/callback',
-        // passReqToCallback: true
     },
-    async ( accessToken, refreshToken, profile, cb) => {
+    async ( accessToken, refreshToken, profile, done) => {
         try {
             // Check if the user already exists based on their Google ID
             let user = await User.findOne({ googleId: profile.id })
             if (user) {
-                return done(null, user);
+                done(null, user);
               } else {
                 // If the user doesn't exist, create a new user in your database
-                const user = new User({
+                const user =  await new User({
                   googleId: profile.id,
                   userName: profile.displayName,
                   email: profile.emails ? profile.emails[0].value : null,
+                  profileImage: profile.photos[0].value
                   // You might want to store other profile information as needed
                 });
                 const savedUser = await user.save();
@@ -30,10 +30,6 @@ module.exports = function(passport){
             } catch (err) {
               return done(err);
             }
-        // }
-        // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        //     return cb(err, user);
-        //   })
     }
     ))
     passport.serializeUser((user, done) => {
