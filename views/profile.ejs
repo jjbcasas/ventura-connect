@@ -84,7 +84,7 @@
                     <div class="avatar avatar-placeholder w-full">
                         <div class="bg-neutral text-neutral-content w-20 rounded-full mx-auto">
                         <% if ( !posts[0] ){ %>
-                            <span class="text-3xl"><%= accountUser.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></span>
+                            <span class="text-3xl"><%= accountUser[0].userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></span>
                         <%} else {%>
                             <span class="text-3xl"><%= posts[0].userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ')  %></span>
                         <%}%>
@@ -108,16 +108,16 @@
                     </details>
                     <% } else { %>
                         <details>
-                        <summary class="text-center">Add Photo</summary>
-                        <form action="/profile/uploadProfilePhoto?_method=PUT" enctype="multipart/form-data" method="POST" class="bg-base-100 rounded-t-none p-2">
-                            <div>
-                                <input type="file" name="file" class="file-input">
-                            </div>
-                            <div>
-                                <button type="submit" class="btn btn-neutral mt-4">Upload</button>
-                            </div>
-                        </form>
-                    </details>
+                            <summary class="text-center">Add Photo</summary>
+                            <form action="/profile/uploadProfilePhoto?_method=PUT" enctype="multipart/form-data" method="POST" class="bg-base-100 rounded-t-none p-2">
+                                <div>
+                                    <input type="file" name="file" class="file-input">
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-neutral mt-4">Upload</button>
+                                </div>
+                            </form>
+                        </details>
                     <% } %>
                 <%} else {%>
                 <!-- follow and unfollow button for different user profile -->
