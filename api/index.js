@@ -13,7 +13,7 @@ const feedRoutes = require('../routes/feed')
 const profileRoutes = require('../routes/profile')
 const postRoutes = require('../routes/post')
 
-require('dotenv').config({path:'../config/.env'})
+require('dotenv').config({path:'./config/.env'})
 
 // Passport config
 require('../config/passport')(passport)
