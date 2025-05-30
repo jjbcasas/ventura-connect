@@ -13,7 +13,7 @@ const feedRoutes = require('../routes/feed')
 const profileRoutes = require('../routes/profile')
 const postRoutes = require('../routes/post')
 
-require('dotenv').config({path:'./config/.env'})
+require('dotenv').config({path:'../config/.env'})
 
 // Passport config
 require('../config/passport')(passport)
@@ -24,6 +24,8 @@ require('../config/passport-google')(passport)
 connectDB()
 
 app.set('view engine','ejs')
+
+app.set('views', path.join(__dirname, '../views'))
 
 app.use(express.static('public'))
 
