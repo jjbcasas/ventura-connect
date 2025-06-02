@@ -11,7 +11,7 @@
 ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![EJS](https://img.shields.io/badge/EJS-F7DF1E?style=for-the-badge&logo=ejs&logoColor=black) <br>
-  My initial objective is to foster local community connections around shared interests and county-specific topics. To achieve this, the application should allow users to create personalized profiles, upload photos, and interact securely through authentication. Early features include 'Like' and 'Follow' functionalities to promote engagement.
+  My initial objective was to foster local community connections around shared interests and county-specific topics. To achieve this, the application should allow users to create personalized profiles, upload photos, and interact securely through authentication. Early features include 'Like' and 'Follow' functionalities to promote engagement.
 
 # Optimizations
   I plan to enhance the app by expanding user customization options, enabling cross-user posting, integrating diverse media types for richer content, and adding chat functionality.
