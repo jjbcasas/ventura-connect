@@ -20,7 +20,7 @@
    Through this process, I gained significant experience in backend development, particularly in designing and implementing CRUD operations. My proficiency in asynchronous programming with async/await improved considerably, and I deepened my knowledge of database querying for efficient and powerful feature creation.
 
 # Install
-  run `npm install`
+  run `npm install` <br>
   run `npm start` or `node server.js`
 
 # Things to add
@@ -31,4 +31,4 @@
     - API KEY = `your cloudinary api key`
     - API SECRET = `your cloudinary api secret`
     - GOOGLE_CLIENT_ID = `your google client id`
-    - GOOGLE_CLIENT_SECRET = 'your google client secret'
+    - GOOGLE_CLIENT_SECRET = `your google client secret`
