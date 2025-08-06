@@ -273,7 +273,7 @@
                 <h3 class="text-center pt-4"><strong>Recommended people</strong></h3>
                 <div class="card w-full bg-base-96 card-xs shadow-sm">
                     <div class="card-body">
-                    <ul class="flex flex-wrap">
+                    <ul class="flex flex-wrap justify-center">
                     <% for ( var i = 0; i < allUsers.length; i++) { %>
                         <% if ( !user.followingId.includes(allUsers[i]._id) && allUsers[i]._id.toString() !== user.id) { %>
                             <% if ( allUsers[i].profileImage ) { %>
