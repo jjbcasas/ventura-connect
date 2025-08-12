@@ -19,7 +19,7 @@
                     <a href="/feed" class="btn btn-ghost text-xl">Ventura Connect</a>
                 </div>
 
-                <div class="flex justify-end  w-1/2">
+                <div class="flex justify-end">
                 
                     <!-- Header Avatar -->
                     <% if ( user.profileImage ) {%>
@@ -51,122 +51,129 @@
         <!-- Main Section/Div -->
         <div class="flex flex-wrap justify-evenly min-h-125">
             
-            <div class="w-1/4 pt-4 pb-4">
-
-                <!-- Profile Image -->
-                <% if ( post[0].user.profileImage ) {%>
-                    <div class="avatar w-full">
-                        <div class="w-20 rounded-full mx-auto">
+            <section class="w-3/4 md:w-1/4 pt-4 pb-4 px-2">
+                <div class="flex md:flex-wrap sm:no-wrap flex-wrap justify-around">
+                    <div class="w-full sm:w-1/3 md:w-full">
+                        <!-- Profile Image -->
+                        <% if ( post[0].user.profileImage ) {%>
+                            <div class="avatar w-full">
+                                <div class="w-20 rounded-full mx-auto">
+                                    <a href="/profile/<%= post[0].user._id%>">
+                                        <img src="<%= post[0].user.profileImage %>" />
+                                    </a>
+                                </div>
+                            </div>
+                        <!-- No Profile Image -->
+                        <%} else {%>
                             <a href="/profile/<%= post[0].user._id%>">
-                                <img src="<%= post[0].user.profileImage %>" />
+                                <div class="avatar avatar-placeholder w-full">
+                                    <div class="bg-neutral text-neutral-content w-20 rounded-full mx-auto">
+                                        <span class="text-3xl"><%= post[0].userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ')  %></span>
+                                    </div>
+                                </div>
                             </a>
-                        </div>
-                    </div>
-                <!-- No Profile Image -->
-                <%} else {%>
-                    <a href="/profile/<%= post[0].user._id%>">
-                        <div class="avatar avatar-placeholder w-full">
-                            <div class="bg-neutral text-neutral-content w-20 rounded-full mx-auto">
-                                <span class="text-3xl"><%= post[0].userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ')  %></span>
-                            </div>
-                        </div>
-                    </a>
-                <%}%>
-                    
-                <!-- Upload Button for User -->
-                <% if( post[0].user._id == user.id ) {%>
-                    <details>
-                        <summary class="text-center">Change Photo</summary>
-                        <form action="/post/uploadProfilePhoto?_method=PUT" enctype="multipart/form-data" method="POST" class="bg-base-100 rounded-t-none p-2">
-                            <div>
-                                <input type="file" name="file" class="file-input">
-                            </div>
-                            <div>
-                                <button type="submit" class="btn btn-neutral mt-4">Upload</button>
-                            </div>
-                        </form>
-                    </details>
-                <%} else {%>
-
-                    <!-- for follow and unfollow button -->
-                    
-                    <% if ( post[0].user.followerId.length == 0 ) {%>
-                    <!-- this does not works too  if ( accountUser[0].followerId !== user.id ) -->
-                    <!-- this does not work (!accountUser[0].followerId) -->
-                        <div class="w-1/4 mx-auto">
-                            <form action="/post/followUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
-                                <button class="btn btn-soft btn-primary w-full mt-2" type="submit">Follow</button>
-                            </form>
-                        </div>
-                    <% } else { %>
-                        <% let isFollowing = false %>
-                        <% for ( var i = 0; i < post[0].user.followerId.length; i++) { %>
-                            <% if ( post[0].user.followerId[i].toString() == user._id.toString() ) { %>
-                                <%isFollowing = true%>
-                                <%break%>
-                            <%}%>
                         <%}%>
-
-                        <% if ( isFollowing ) {%>
+                            
+                        <!-- Upload Button for User -->
+                        <% if( post[0].user._id == user.id ) {%>
+                            <details>
+                                <summary class="text-center">Change Photo</summary>
+                                <form action="/post/uploadProfilePhoto?_method=PUT" enctype="multipart/form-data" method="POST" class="bg-base-100 rounded-t-none p-2">
+                                    <div>
+                                        <input type="file" name="file" class="file-input">
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="btn btn-neutral mt-4">Upload</button>
+                                    </div>
+                                </form>
+                            </details>
+                        <%} else {%>
+        
+                            <!-- for follow and unfollow button -->
+                            
+                            <% if ( post[0].user.followerId.length == 0 ) {%>
+                            <!-- this does not works too  if ( accountUser[0].followerId !== user.id ) -->
+                            <!-- this does not work (!accountUser[0].followerId) -->
                                 <div class="w-1/4 mx-auto">
-                                    <form action="/post/unfollowUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
-                                        <button class="btn btn-soft btn-primary w-full mt-2" type="submit">Unfollow</button>
+                                    <form action="/post/followUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
+                                        <button class="btn btn-soft btn-primary w-full mt-2" type="submit">Follow</button>
                                     </form>
                                 </div>
-                        <% } else { %>
-                            <div class="w-1/4 mx-auto">
-                                <form action="/post/followUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
-                                    <button class="btn btn-soft btn-primary w-full mt-2" type="submit">Follow</button>
-                                </form>
-                            </div>
-                        <% } %>
-
-                    <%}%>
-                
-                <%}%>
-                <!-- Profile Details of Users without Post -->
-                <% if ( !post[0] ){ %>
-                    <p class="text-center"><strong>User Name</strong>: <%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
+                            <% } else { %>
+                                <% let isFollowing = false %>
+                                <% for ( var i = 0; i < post[0].user.followerId.length; i++) { %>
+                                    <% if ( post[0].user.followerId[i].toString() == user._id.toString() ) { %>
+                                        <%isFollowing = true%>
+                                        <%break%>
+                                    <%}%>
+                                <%}%>
+        
+                                <% if ( isFollowing ) {%>
+                                        <div class="w-1/4 mx-auto">
+                                            <form action="/post/unfollowUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
+                                                <button class="btn btn-soft btn-primary w-full mt-2" type="submit">Unfollow</button>
+                                            </form>
+                                        </div>
+                                <% } else { %>
+                                    <div class="w-1/4 mx-auto">
+                                        <form action="/post/followUser/<%=post[0].user._id%>?_method=PUT" method="POST" >
+                                            <button class="btn btn-soft btn-primary w-full mt-2" type="submit">Follow</button>
+                                        </form>
+                                    </div>
+                                <% } %>
+        
+                            <%}%>
+                        
+                        <%}%>
+                        <!-- Profile Details of Users without Post -->
+                        <% if ( !post[0] ){ %>
+                            <p class="text-center"><strong>User Name</strong>: <%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
+                            <% if( post[0].user._id == user.id ) {%>
+                                <p class="text-center"><strong>Email</strong>: <%= post[0].user.email %></p>
+                            <%}%>
+                        <%} else {%>
+                        <!-- Profile Details of Users with Post -->
+                            <p class="text-center"><strong>User Name</strong>: <%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
+                            <% if( post[0].user._id == user.id ) {%>
+                                <p class="text-center"><strong>Email</strong>: <%= post[0].user.email %></p>
+                            <%}%>
+                        <%}%>
+                    </div>
+    
+                    <!-- Uploading Section for user -->
                     <% if( post[0].user._id == user.id ) {%>
-                        <p class="text-center"><strong>Email</strong>: <%= post[0].user.email %></p>
-                    <%}%>
-                <%} else {%>
-                <!-- Profile Details of Users with Post -->
-                    <p class="text-center"><strong>User Name</strong>: <%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')  %></p>
-                    <% if( post[0].user._id == user.id ) {%>
-                        <p class="text-center"><strong>Email</strong>: <%= post[0].user.email %></p>
-                    <%}%>
-                <%}%>
-
-                <!-- Uploading Section for user -->
-                <% if( post[0].user._id == user.id ) {%>
-                    <h2 class="pt-4 text-center">Add a post</h2>
-                    <fieldset class="fieldset w-xs bg-base-200 border border-base-300 p-4 rounded-box mx-auto">
-                        <form action="/post/createPost/<%= post[0].user._id %>" enctype="multipart/form-data" method="POST">
-                            <div>
-                                <label for="title" class="fieldset-label">Title</label>
-                                <input type="text" class="input" name="title" id="title">
-                            </div>
-                            <div>
-                                <label for="caption" class="fieldset-label">Caption</label>
-                                <textarea name="caption" class="input pt-2" id="caption"></textarea>
-                            </div>
-                            <div>
-                                <label for="imageUpload" class="fieldset-legend">Image</label>
-                                <input type="file" name="file" id="imageUpload" class="file-input">
-                            </div>
-                            <div>
-                                <button type="submit" class="btn btn-neutral mt-4">Upload</button>
-                            </div>
-                            <!-- <input type="submit" value="Upload" class="btn btn-neutral mt-4"> -->
-                        </form>
-                    </fieldset>
-                <% } %>
-            </div>
+                        <div class="w-full sm:w-2/3 md:w-full grow-1 px-2">
+                            <details>
+                                <summary class="pt-4 text-center">Add a post</summary>
+                                <fieldset class="fieldset w-full bg-base-200 border border-base-300 p-4 rounded-box mx-auto">
+                                    <form action="/post/createPost/<%= post[0].user._id %>" enctype="multipart/form-data" method="POST">
+                                        <div>
+                                            <label for="title" class="fieldset-label">Title</label>
+                                            <input type="text" class="input w-full" name="title" id="title">
+                                        </div>
+                                        <div>
+                                            <label for="caption" class="fieldset-label">Caption</label>
+                                            <textarea name="caption" class="input pt-2 w-full" id="caption"></textarea>
+                                        </div>
+                                        <div>
+                                            <label for="imageUpload" class="fieldset-legend">Image</label>
+                                            <input type="file" name="file" id="imageUpload" class="file-input w-full">
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-neutral mt-4">Upload</button>
+                                        </div>
+                                        <!-- <input type="submit" value="Upload" class="btn btn-neutral mt-4"> -->
+                                    </form>
+                                </fieldset>
+                            </details>
+                        </div>
+                    <% } %>
+                </div>
+            </section>
 
             
 
-            <div class="w-2/4 pt-4">
+            <div class="w-full md:w-2/4 order-3 md:order-2 pt-4 px-1">
 
                 <!-- Profile Feed for users with post-->
                 <ul>
@@ -178,12 +185,12 @@
                             <img src="<%= post[0].image%>"/>
                         </figure>
             
-                        <div class="card-body flex flex-row">
+                        <div class="card-body flex flex-row w-full p-2 sm:p-6">
                             <!-- for users with avatar -->
                             <% if ( post[0].user.profileImage ) {%>
-                                <div class="flex flex-wrap w-1/2 justify-between">
+                                <div class="flex flex-wrap w-2/6 justify-between">
                                     <div class="avatar w-full">
-                                        <div class="w-12 rounded-full">
+                                        <div class="w-14 rounded-full">
                                             <a href="/profile/<%=post[0].user._id%>">
                                                 <img src="<%= post[0].user.profileImage %>" />
                                             </a>
@@ -193,8 +200,8 @@
                                 </div>
                             <%} else {%>
                             <!-- for users without avatar -->
-                                <div class="flex flex-wrap w-1/2 avatar avatar-placeholder m-2">
-                                    <div class="bg-neutral text-neutral-content w-12 rounded-full ">
+                                <div class="flex flex-wrap w-2/6 avatar avatar-placeholder m-2">
+                                    <div class="bg-neutral text-neutral-content w-14 rounded-full ">
                                         <a href="/profile/<%=post[0].user._id%>">
                                             <span class="text-3xl"><%= post[0].user.userName.split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
                                         </a>    
@@ -203,7 +210,7 @@
                                 </div>
                             <%}%>
             
-                            <div class="card-actions w-1/2 justify-end">
+                            <div class="card-actions w-4/6 flex flex-nowrap justify-end">
                                 <h3 class="pt-2">Likes: <%= post[0].likes %></h3>
                                 <% if ( user.likedPostId.includes(post[0]._id)) {%>
                                     <form action="/post/minusLikePost/<%= post[0]._id %>?_method=PUT" method="POST">
@@ -216,7 +223,7 @@
                                 <%}%>
 
                                 <!-- Delete button for login users only -->
-                                <% if (post[0].user == user.id){ %>
+                                <% if (post[0].user._id == user.id){ %>
                                     <form action="/post/deletePost/<%= post[0]._id%>?_method=DELETE" method="POST">
                                         <button type="submit" class="btn btn-primary">Delete</button>
                                     </form>
@@ -292,7 +299,7 @@
 
             
 
-            <div class="w-1/4 px-2">
+            <div class="w-1/4 order-2 md:order-3 px-2">
             
                 <!-- Friends List Section of User -->
                 <% if ( post[0].user._id == user.id ) { %>
