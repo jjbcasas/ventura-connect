@@ -11,29 +11,29 @@
         
         <!-- Header Section -->
         <header>
-            <div class="navbar bg-base-100 shadow-sm">
-                <div class="flex-1">
+            <div class="navbar bg-base-100 shadow-sm w-full">
+                <div class="flex-1  min[450px]:w-1/2 w-1/3">
                 <!-- Name or Logo -->
                 <a href="/feed" class="btn btn-ghost text-xl">Ventura Connect</a>
                 </div>
-                <div class="flex-none">
+                <div class="flex-none w-2/3 min-[450px]:w-1/2 text-right">
 
                     <!-- Header avatar -->
                     <% if ( user.profileImage ) {%>
-                        <div class="avatar p-2">
+                        <div class="avatar p-0 min[350px]:p-2">
                             <div class="w-10 rounded-full mx-auto">
                                 <img src="<%= user.profileImage %>" />
                             </div>
                         </div>
                     <%} else {%>
-                        <div class="avatar avatar-placeholder p-2">
+                        <div class="avatar avatar-placeholder p-0 min[350px]:p-2">
                             <div class="bg-neutral text-neutral-content w-10 rounded-full mx-auto">
                                 <span class="text-3xl"><%= user.userName[0].split(' ').map(word => word.charAt(0).toUpperCase()).join(' ') %></span>
                             </div>
                         </div>
                     <%}%>
 
-                <ul class="menu menu-horizontal px-1">
+                <ul class="menu menu-horizontal p-0 min[350px]:px-1">
                     <li><a href="/profile/<%=user._id%>">Profile</a></li>
                     <li><a href="/logout">Logout</a></li>
                 </ul>
@@ -268,9 +268,9 @@
             </div>
 
             <!-- Right Section/Div -->
-            <div class="w-1/4 sm:w-1/3 px-1">
+            <div class="w-1/4 sm:w-1/3 pl-1 min-[340]:px-1">
 
-                <h3 class="text-xs sm:text-base text-center pt-4"><strong>Recommended people</strong></h3>
+                <h3 class="text-[.6rem] sm:text-base text-center pt-4"><strong>Recommended people</strong></h3>
                 <div class="card w-full bg-base-96 card-xs shadow-sm">
                     <div class="card-body">
                     <ul class="flex flex-wrap justify-center">
