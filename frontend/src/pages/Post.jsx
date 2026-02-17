@@ -33,13 +33,15 @@ const Post = () => {
         followUser,
         unfollowUser,
         deletePost,
-        uploadPhoto,
-        changePhoto
+        uploadPhoto
     } = useApp()
+    // const fileInputRef = useRef(null)
+    // const [ selectedImg, setSelectedImg ] = useState(null)
 
     useEffect( () => {
         const controller = new AbortController()
         setLoading(true)
+        setPost(null)
         const fetchData = async () => {
             try {
                 const res = await fetch(`/api/post/${id}`, {
@@ -64,7 +66,7 @@ const Post = () => {
                 }
 
             } catch (error) {
-                if ( error instanceof Error && error.name === 'AbortError') {
+                if ( error.name === 'AbortError') {
                     console.log('Request was cancelled');
                     return; // Stop execution, no state should be set.
                 }
@@ -80,7 +82,44 @@ const Post = () => {
         return () => {
             controller.abort(); 
         }
-    }, [])
+    }, [id])
+
+    // const handleImageUpload = async (e) => {
+    //     const file = e.target.files[0]
+    //     if(!file){
+    //     // console.log('No file selected')
+    //     // toast.error('Please select an image file.')
+    //         return
+    //     }
+    //     if (!file.type.startsWith("image/")) {
+    //         toast.error("Please select an image file");
+    //         return;
+    //     }
+        
+    //     // Create a local preview: Convert the file to a Base64 string so the user 
+    //     // sees their new photo immediately without waiting for the server upload.
+    //     const reader = new FileReader()
+    //     reader.onloadend = () => setSelectedImg(reader.result) 
+    //     // This updates the <img> src locally
+    //     reader.readAsDataURL(file)
+        
+    //     // Handle the Upload (FormData)
+    //     try {
+    //         const formData = new FormData(/*file*/)
+    //         formData.append("file",file)
+                    
+    //         await uploadPhoto(formData, `/api/post/uploadProfilePhoto`, ()=> setSelectedImg(null))
+    
+    //         // toast.success("Profile photo updated!");
+        
+    //         // Clear the input so the user can select the same file again if they want
+    //         if (fileInputRef.current) {
+    //             fileInputRef.current.value = '';
+    //         }
+    //     } catch (error) {
+    //         console.error("Upload Error:", error)
+    //     }
+    // }
     
     const handleLikePost = ( postId ) => {
         const updatedPost = ( data ) => {
@@ -366,43 +405,39 @@ const Post = () => {
                       <section className="w-3/4 md:w-1/4 py-12 px-2">
                           <div className="flex md:flex-wrap sm:no-wrap flex-wrap justify-around">
                               <div className="w-full sm:w-1/3 md:w-full">
-                              { accountUser?.profileImage ?
-                                      
-                                  <Avatar src={accountUser?.profileImage} user={accountUser} classNameOne='w-full' classNameTwo="w-20 mx-auto" />
-                                  : /* No Profile Image */
-                                  <Placeholder user={accountUser} classNameOne='w-full' classNameTwo='w-20 mx-auto'/> }
-                              
                                   {/* Upload Button for User */}
                                   { accountUser?._id === user?._id ? (
                               
-                                      accountUser?.profileImage ? (
-                                          
-                                        <Upload
-                                            submitPhoto={( formData ) => changePhoto( formData, `/api/post/changeProfilePhoto` )}
-                                            title='Change Photo'
-                                        />
-                                      ) : (
-                                        <Upload
-                                            submitPhoto={( formData ) => uploadPhoto( formData, `/api/post/uploadProfilePhoto` )}
-                                            title='Add Photo'
+                                      accountUser?.profileImage && (
+                                          <Upload 
+                                            submitPhoto={(formData, selectedImg)=> uploadPhoto( formData, `/api/post/uploadProfilePhoto`, selectedImg)}
+                                            user={user}
                                         />
                                       )
                                       
-                                  ) : ( accountUser?.followerId?.includes(user?._id) ? (
-                                              <UnfollowButton
-                                                classNameOne='mt-2'
-                                                userId={accountUser?._id}
-                                                unfollowUser={ handleUnfollowUser }
-                                                />
-                                      ):(
-                                                <FollowButton
+                                  ) : (
+                                    <>
+                                        {accountUser?.profileImage ?
+                                                
+                                            <Avatar src={accountUser?.profileImage} user={accountUser} classNameOne='w-full' classNameTwo="w-20 mx-auto" />
+                                            : /* No Profile Image */
+                                            <Placeholder user={accountUser} classNameOne='w-full' classNameTwo='w-20 mx-auto'/>}
+
+                                        {accountUser?.followerId?.includes(user?._id) ? (
+                                                <UnfollowButton
                                                     classNameOne='mt-2'
                                                     userId={accountUser?._id}
-                                                    followUser={handleFollowUser}
-                                                />
-                                      )
+                                                    unfollowUser={ handleUnfollowUser }
+                                                    />
+                                        ):(
+                                                    <FollowButton
+                                                        classNameOne='mt-2'
+                                                        userId={accountUser?._id}
+                                                        followUser={handleFollowUser}
+                                                    />
+                                        )}
+                                    </>
                                   )}
-      
                               {/* Profile Details */}
                               { accountUser?._id === user?._id ? 
                                   <div className='w-full'>

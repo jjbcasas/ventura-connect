@@ -1,4 +1,4 @@
-import React, {
+import {
     createContext,
     useContext,
     useState,
@@ -14,10 +14,17 @@ export const AppProvider = ({ children }) => {
     const [ posts, setPosts ] = useState([])
     const [ comments, setComments ] = useState([])
     const [ accountUser, setAccountUser ] = useState({})
+    const [loading, setLoading] = useState({}); // Very important!
+    const [ userResults, setUserResults ] = useState([])
     const { user, setUser } = useAuth()
+
+    const setSpecificLoading = ( key, value ) => {
+        setLoading(prev => ({ ...prev, [key]: value }));
+    }
 
     const addPost = useCallback( async (formData, apiUrl) => {
         try {
+            setSpecificLoading('addPost', true )
             const res = await fetch(apiUrl, {
                 method: 'POST',
                 credentials: 'include',
@@ -29,20 +36,34 @@ export const AppProvider = ({ children }) => {
                 if (data.post) {
                     setPosts(prevPosts => [data.post, ...prevPosts ])
                     toast.success(data.message)
+                    return true
                 }
             } else {
-                console.error('Error adding a post', data.message)
+                console.error('Error adding a post:', data.message)
                 toast.error(data.message)
+                // The server didn't "crash" the code, but you want to treat it like a crash.
+                // Hence the use of new Error() to create a brand new error
+                throw new Error(data.message)
             }
 
         } catch (error) {
             console.error('Error adding a post:', error)
-            toast.error('Could not connect to the server')
+            // Only toast here if it's a network/system failure.
+            // If it was a server error, the 'else' block already toasted the specific message.
+            if (error.name !== 'Error') { 
+                toast.error('Could not connect to the server');
+            }
+            throw error /* re-throwing the one you just caught hence just throw error */
+        } finally {
+            // This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            setSpecificLoading('addPost', false )
         }
     }, [] )
 
     const deletePost = useCallback( async (postId, callback, apiUrl) => {
         try {
+            setSpecificLoading(`deletePost_${postId}`, true )
             const res = await fetch(`${apiUrl}${postId}`, {
                 method: 'DELETE',
                 credentials: 'include',
@@ -61,11 +82,16 @@ export const AppProvider = ({ children }) => {
         } catch (error) {
             console.error('Error deleting post:', error)
             toast.error('Could not connect to the server')
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            setSpecificLoading(`deletePost_${postId}`, false )
         }
     }, [] )
 
     const addComment = useCallback( async(comment, postId, apiUrl) => {
         try {
+            setSpecificLoading(`addComment_${postId}`, true )
             const res = await fetch(`${apiUrl}${postId}`,{
                 method: 'POST',
                 credentials: 'include',
@@ -81,19 +107,33 @@ export const AppProvider = ({ children }) => {
                 if (data.comment){
                     setComments( prevComments => [ data.comment, ...prevComments ])
                     toast.success(data.message)
+                    return true
                 }
             } else {
                 console.error('Error adding a comment:', data.message || 'Unknown error')
                 toast.error(data.message)
+                // The server didn't "crash" the code, but you want to treat it like a crash.
+                // Hence the use of new Error() to create a brand new error
+                throw new Error(data.message)
             }
         } catch (error) {
             console.error('Error adding a comment:', error)
-            toast.error('Could not connect to the server')
+            // Only toast here if it's a network/system failure.
+            // If it was a server error, the 'else' block already toasted the specific message.
+            if (error.name !== 'Error') {
+                toast.error('Could not connect to the server')
+            }
+            throw error /* re-throwing the one you just caught hence just throw error */
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            setSpecificLoading(`addComment_${postId}`, false )
         }
     }, [] )
 
     const followUser = useCallback( async ( userId, callback, apiUrl ) => {
         try {
+            setSpecificLoading(`followUser_${userId}`, true )
             const res = await fetch(`${apiUrl}${userId}`,{
                 method: 'PUT',
                 credentials: 'include',
@@ -113,11 +153,17 @@ export const AppProvider = ({ children }) => {
         } catch (error) {
             console.error('Error following a user:', error)
             toast.error('Could not connect to the server')
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            // setLoading(false); 
+            setSpecificLoading(`followUser_${userId}`, false )
         }
     }, [] )
 
     const unfollowUser = useCallback( async ( userId, apiUrl, callback ) => {
         try {
+            setSpecificLoading(`unfollowUser_${userId}`, true )
             const res = await fetch(`${apiUrl}${userId}`,{
                 method: 'PUT',
                 credentials: 'include',
@@ -137,11 +183,18 @@ export const AppProvider = ({ children }) => {
         } catch (error) {
             console.error('Error unfollowing a user:', error)
             toast.error('Could not connect to the server')
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            // setLoading(false); 
+            setSpecificLoading(`unfollowUser_${userId}`, false )
         }
     }, [] )
 
     const likePost = useCallback( async (postId, callback, apiUrl ) => {
         try {
+            // setLoading(true)
+            setSpecificLoading(`likePost_${postId}`, true )
             const res = await fetch(`${apiUrl}${postId}`,{
                 method: 'PUT',
                 credentials: 'include',
@@ -168,12 +221,18 @@ export const AppProvider = ({ children }) => {
         } catch (error) {
             console.error('Error in liking post:', error)
             toast.error('Could not connect to the server')
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            // setLoading(false); 
+            setSpecificLoading(`likePost_${postId}`, false )
         }
-
     }, [] )
 
     const unlikePost = useCallback( async ( postId, callback, apiUrl ) => {
         try {
+            // setLoading(true)
+            setSpecificLoading(`unlikePost_${postId}`, true )
             const res = await fetch(`${apiUrl}${postId}`,{
                 method: 'PUT',
                 credentials: 'include',
@@ -196,14 +255,19 @@ export const AppProvider = ({ children }) => {
         } catch (error) {
             console.error('Error in unliking post:', error)
             toast.error('Could not connect to the server')
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            // setLoading(false);
+            setSpecificLoading(`unlikePost_${postId}`, false )
         }
-        
     }, [] )
 
-    const uploadPhoto = useCallback( async (formData, apiUrl) => {
+    const uploadPhoto = useCallback( async (formData, apiUrl, onFailure ) => {
         try {
+            setSpecificLoading(`uploadPhoto`, true )
             const res = await fetch(apiUrl, {
-                method: 'PUT',
+                method: 'PATCH',
                 credentials: 'include',
                 body: formData
             })
@@ -213,50 +277,72 @@ export const AppProvider = ({ children }) => {
                 if ( data.newProfileImage.profileImage ){
                     setUser( prevUser => ({...prevUser, profileImage: data.newProfileImage.profileImage}))
                     setAccountUser( prevAccountUser => (
-                        prevAccountUser._id === user._id
+                        prevAccountUser?._id === data.newProfileImage?._id
                             ? {...prevAccountUser, profileImage: data.newProfileImage.profileImage}
                             : prevAccountUser
                     ))
                     toast.success(data.message)
+                    return true
                 }
             } else {
                 console.error('Error uploading photo:', data.message)
                 toast.error(data.message)
+                if (onFailure) onFailure(); // <-- Reset the preview if the server says "No"
+                // The server didn't "crash" the code, but you want to treat it like a crash.
+                // Hence the use of new Error() to create a brand new error
+                throw new Error(data.message)
             }
         } catch (error) {
             console.error('Error uploading photo:', error)
-            toast.error('Could not connect to the server')
+            if (onFailure) onFailure(); // <-- Reset the preview if the internet is down
+            // Only toast here if it's a network/system failure.
+            // If it was a server error, the 'else' block already toasted the specific message.
+            if (error.name !== 'Error') { 
+                toast.error('Could not connect to the server')
+            }
+            throw error /* re-throwing the one you just caught hence just throw error */
+        } finally {
+            // 3. This runs regardless of success or failure
+            // We only reach here if the request wasn't aborted
+            setSpecificLoading(`uploadPhoto`, false )
         }
-    }, [] )
+    }, [ ] )
 
-    const changePhoto = useCallback( async (formData, apiUrl ) => {
+    const searchUser = useCallback( async ( name, signal ) => {
+        if (!name) return; // Don't search if the input is empty
+        setSpecificLoading(`searchUser`, true )
         try {
-            const res = await fetch(apiUrl, {
-                method: 'PUT',
+            const res = await fetch(`/api/feed/search?name=${name}`, {
                 credentials: 'include',
-                body: formData
+                signal
             })
             const data = await res.json()
 
-            if ( res.ok ){
-                if ( data.newProfileImage.profileImage ){
-                    setUser( prevUser => ({...prevUser, profileImage: data.newProfileImage.profileImage}))
-                    setAccountUser( prevAccountUser => (
-                        prevAccountUser._id === user._id
-                            ? {...prevAccountUser, profileImage: data.newProfileImage.profileImage}
-                            : prevAccountUser
-                    ))
-                    toast.success(data.message)
+            if ( res.ok ) {
+                if ( data?.searchResult ){
+                    setUserResults(data?.searchResult || [] )
+                    // toast.success(data.message)
                 }
             } else {
-                console.error('Error uploading photo:', data.message)
-                toast.error(data.message)
+                console.log('Error searching user: ', data.message)
+                // toast.error(data.message)
             }
         } catch (error) {
-            console.error('Error uploading photo:', error)
+            // 1. Check if it's a cancellation first
+            if ( error.name === 'AbortError') {
+                // Silently stop. No console log needed in production, 
+                // but helpful during dev.
+                console.log('Request was cancelled')
+                return // Stop execution, no state should be set.
+            }
+            console.log('Error searching user: ', error.message)
             toast.error('Could not connect to the server')
+        } finally {
+            if (!signal?.aborted) {
+                setSpecificLoading('searchUser', false)
+            }
         }
-    }, [] )
+    }, [])
 
     const appContextValue = useMemo(()=> ({
         posts,
@@ -273,8 +359,11 @@ export const AppProvider = ({ children }) => {
         followUser,
         unfollowUser,
         uploadPhoto,
-        changePhoto
-    }), [ addPost, posts, setPosts, deletePost, addComment, comments, setComments, accountUser, setAccountUser, likePost, unlikePost, followUser, unfollowUser, uploadPhoto, changePhoto ])
+        searchUser,
+        userResults,
+        setUserResults,
+        loading
+    }), [ addPost, posts, setPosts, deletePost, addComment, comments, setComments, accountUser, setAccountUser, likePost, unlikePost, followUser, unfollowUser, uploadPhoto, searchUser, userResults, setUserResults, loading ])
   return (
     
     <AppContext.Provider value={appContextValue}>

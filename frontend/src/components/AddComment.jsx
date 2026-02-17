@@ -1,23 +1,32 @@
 import { useState } from "react"
+import { useApp } from "../context/AppContext"
+import { useChat } from "../context/ChatContext"
 import toast from "react-hot-toast"
+import Spinner from "./Spinner"
+import useKeyboardSound from "../hooks/useKeyboardSound"
 
 const AddComment = ({addComment, postId}) => {
   const [comment, setComment] = useState('')
+  const { loading } = useApp()
+  const { playRandomKeyStrokeSound } = useKeyboardSound()
+  const { isSoundEnabled } = useChat()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    
+    if ( isSoundEnabled ) playRandomKeyStrokeSound()
+    // 3. Validation (Guard Clause)
+    if ( !comment ) {
+      toast.error('Please add a comment')
+      return
+    }
+    
     try {
-      e.preventDefault()
-
-      if ( !comment ) {
-        toast.error('Please add a comment')
-        return
-      }
-
-      addComment(comment, postId)
+      await addComment(comment, postId)
       // toast.success('Comment added successfully!')
       setComment('')
     } catch (error) {
-      console.error(error)
+      console.error("Failed to add comment:", error)
     }
   }
 
@@ -31,8 +40,13 @@ const AddComment = ({addComment, postId}) => {
               placeholder="Write comments here..." 
               // required
               value={comment}
-              onChange={(e)=> setComment(e.target.value) }/>
-            <button type="submit" className="btn btn-primary">Submit</button>
+              onChange={(e)=> {
+                setComment(e.target.value) 
+                isSoundEnabled && playRandomKeyStrokeSound()
+              }}/>
+            <button type="submit" className="btn btn-primary" disabled={loading[`addComment_${postId}`]} >
+              {loading[`addComment_${postId}`] ? <Spinner size={20} /> : "Submit"}
+            </button>
         </form>
     </div>
   )

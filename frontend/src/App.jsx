@@ -17,6 +17,10 @@ import { AppProvider } from './context/AppContext'
 import PublicRoute from './utils/PublicRoute'
 import ProtectedRoute from './utils/ProtectedRoute'
 import Logout from './components/Logout'
+import Chat from './pages/Chat'
+import { ChatProvider } from './context/ChatContext'
+import Success from './pages/StripeSuccess'
+import StripeOnboardingSuccess from './pages/StripeOnboardingSuccess'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,6 +35,9 @@ const router = createBrowserRouter(
         <Route path='/feed' element={<Feed />}/>
         <Route path='/post/:id' element={<Post />}/>
         <Route path='/profile/:id' element={<Profile />}/>
+        <Route path='/chat' element={<Chat />}/>
+        <Route path='/stripe-success' element={<Success />} />
+        <Route path='/stripe-onboarding-success' element={<StripeOnboardingSuccess />} />
       </Route>
       {/* {isAuthenticated ? <Route path='/feed' element={<Feed />}/> : <Route path='/login' element={<Login />}/> } */}
     </Route>
@@ -42,7 +49,9 @@ const App = () => {
   return (
     <AuthProvider>
       <AppProvider>
-        <RouterProvider router={router} />
+        <ChatProvider>
+          <RouterProvider router={router} />
+        </ChatProvider>
       </AppProvider>
     </AuthProvider>
   )

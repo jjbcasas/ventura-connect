@@ -1,4 +1,4 @@
-import React, { 
+import { 
   createContext,
   useContext,
   useState,
@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 // import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast';
+import { io } from "socket.io-client"
 
 const AuthContext = createContext(null);
 
@@ -15,10 +16,40 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Very important!
+  const [ socket, setSocket ] = useState(null)
+  // const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5000" : "/"
+  const [ onlineUsers, setOnlineUser ] = useState([])
   // const navigate = useNavigate();
+  
+    const connectSocket = useCallback( () => {
+      // We check user?._id here as a guard
+      if (!user?._id) return
 
-  // const API_BASE_URL = 'http://localhost:5000'; // Your backend URL
-
+      setSocket( prevSocket => {
+        // If a socket already exists and is connected, do nothing!
+        if ( prevSocket?.connected ) return prevSocket
+        // If an old socket exists but is disconnected, clean it up first
+        if ( prevSocket ) prevSocket.disconnect()
+        // Initialize the socket
+        const newSocket = io("http://localhost:5000", {
+          withCredentials: true
+        })
+        return newSocket
+      } )
+    },[ user?._id ])
+  
+    const disconnectSocket = useCallback( () => {
+      // 1. Clear the online users list immediately
+      setOnlineUser([])
+      setSocket((prevSocket) => {
+        // This looks at the current socket value without needing it in [deps]
+        if (prevSocket?.connected) {
+          prevSocket.disconnect();
+        }
+        return null; // Sets state to null
+      })
+    }, [ ])
+  
   // Function to check auth status on initial app load
     const checkAuthStatus = useCallback( async ( signal ) => {
         try {
@@ -31,35 +62,36 @@ export const AuthProvider = ({ children }) => {
             const data = await res.json()
 
             if (data.isAuthenticated && data.user) {
-                setUser(data.user);
-                setIsAuthenticated(true);
+              // State update
+              setUser(data.user)
+              setIsAuthenticated(true)
                 // toast.success(data.message || 'Welcome back!');
-
-                setIsLoading(false)
             } else {
+              // State Cleanup
                 setUser(null);
                 setIsAuthenticated(false);
                 // toast.error(data.message || 'You are not logged in.');
-                
-                setIsLoading(false)
             }
         } catch (error) {
-          if ( error instanceof Error && error.name === 'AbortError') {
+          if ( error.name === 'AbortError') {
                     console.log('Request was cancelled');
                     return; // Stop execution, no state should be set.
                 }
 
             setUser(null);
-            setIsAuthenticated(false);
+            setIsAuthenticated(false)
             console.error('Error checking auth status:', error);
             // toast.error('Failed to connect to authentication server.');
-            
-            setIsLoading(false)
-        }
-    })
+        }finally {
+            // This runs whether try succeeded OR catch ran
+            if (!signal?.aborted) {
+              setIsLoading(false)
+            }
+    }
+    },[ ])
 
     // Function to handle user signup
-    const signup = async (createUser) => {
+    const signup = useCallback(async (createUser) => {
       try {
           const res = await fetch(`/api/signup`, { // Assuming /signup is your backend route
               method: 'POST',
@@ -71,7 +103,7 @@ export const AuthProvider = ({ children }) => {
           });
 
           const data = await res.json(); // Parse the JSON response
-          console.log(data)
+          // console.log(data)
 
           if ( res.ok ) {
               if ( data.user ) {
@@ -82,19 +114,33 @@ export const AuthProvider = ({ children }) => {
                 return { success: true }
               }
           } else {
-              console.error('Signup failed:',data.message)
-              toast.error(data.message)
-              return { success: false }
+            // 1. State Cleanup (For safety)
+            setUser(null)
+            setIsAuthenticated(false)
+            // 2. User Notification (The Toast)
+            toast.error(data.message)
+            // 3. Developer Logging (The Console)
+            console.error('Signup failed:',data.message)
+            // 4. Component Notification (The Throw)
+            throw new Error(data.message || "Signup failed" )
           }
       } catch (error) {
-          console.error('Network error during signup:', error);
-          toast.error('Could not connect to the server. Please try again.');
-          return { success: false }
+        // 1. State Cleanup (For safety)
+          setUser(null)
+          setIsAuthenticated(false)
+          // 2. User Notification (The Toast)
+          if (error.name !== 'Error') { 
+            toast.error('Could not connect to the server')
+          }
+          // 3. Developer Logging (The Console)
+          console.error('Network error during signup:', error)
+          // Re-throw to propagate error to the caller
+          throw error
       }
-    }
+    },[ ])
 
     // Function to handle user login
-  const login = async (/*email, password*/loginForm) => {
+  const login = useCallback(async (/*email, password*/loginForm) => {
     try {
       const res = await fetch(`/api/login`, {
         method: 'POST',
@@ -107,27 +153,88 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
 
       if (res.ok && data.isAuthenticated && data.user) {
-        setUser(data.user);
-        setIsAuthenticated(true);
+        // 1. Update state
+        setUser(data.user)
+        setIsAuthenticated(true)
         // navigate('/feed'); // Redirect to feed on successful login
-        toast.success(data.message || 'Logged in successfully!');
+        // 2. User Notification (The Toast)
+        toast.success(data.message || 'Logged in successfully!')
+        // 3. Return status
         return { success: true }
       } else {
         // Handle login errors (e.g., incorrect credentials)
-          setUser(null);
-          setIsAuthenticated(false);
-          toast.error(data.message || 'Login failed. Please try again.');
-          console.error('Login failed:',data.message)
-          return { success: false }
+        // 1. State Cleanup (For safety)
+        setUser(null);
+        setIsAuthenticated(false)
+        // 2. User Notification (The Toast)
+        toast.error(data.message || 'Login failed. Please try again.')
+        // 3. Developer Logging (The Console)
+        console.error('Login failed:',data.message)
+        // 4. Component Notification (The Throw)
+        throw new Error(data.message || "Login failed" )
       }
     } catch (error) {
-      setUser(null);
-      setIsAuthenticated(false);
-      console.error('Error during login:', error);
-      toast.error('Network error during login. Server might be down.');
-      return { success: false }
+      // 1. State Cleanup (For safety)
+      setUser(null)
+      setIsAuthenticated(false)
+      // 3. Developer Logging (The Console)
+      console.error('Error during login:', error)
+      // 2. User Notification (The Toast)
+      if (error.name !== 'Error') { 
+        toast.error('Could not connect to the server');
+      }
+      // Re-throw to propagate error to the caller
+      throw error
     }
-  };
+  },[ ])
+
+  const googleLogin = useCallback( async( response ) => {
+    try {
+      const res = await fetch(`/api/google`,{
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: response.credential }),
+        credentials: "include"
+      })
+      const data = await res.json()
+
+      if ( res.ok && data.isAuthenticated && data.user ) {
+        // 1. Update state
+        setUser(data.user)
+        setIsAuthenticated(true)
+        // navigate('/feed'); // Redirect to feed on successful login
+        // 2. User Notification (The Toast)
+        toast.success(data.message || 'Logged in successfully!')
+        // 3. Return status
+        return { success: true }
+      } else {
+        // Handle login errors (e.g., incorrect credentials)
+        // 1. State Cleanup (For safety)
+        setUser(null);
+        setIsAuthenticated(false)
+        // 2. User Notification (The Toast)
+        toast.error(data.message || 'Login failed. Please try again.')
+        // 3. Developer Logging (The Console)
+        console.error('Login failed:',data.message)
+        // 4. Component Notification (The Throw)
+        throw new Error(data.message || "Login failed" )
+      }
+    } catch (error) {
+      // 1. State Cleanup (For safety)
+      setUser(null)
+      setIsAuthenticated(false)
+      // 3. Developer Logging (The Console)
+      console.error("Google login failed: ", error)
+      // 2. User Notification (The Toast)
+      if (error.name !== 'Error') { 
+        toast.error('Could not connect to the server');
+      }
+      // Re-throw to propagate error to the caller
+      throw error
+    }
+  }, [])
 
   // Function to handle user google login
   // const googleLogin = async (/*email, password, loginForm*/) => {
@@ -159,7 +266,7 @@ export const AuthProvider = ({ children }) => {
   // };
 
   // Function to handle user logout
-  const logout = async () => {
+  const logout = useCallback(async () => {
     setIsLoading(true)
     try {
       const res = await fetch(`/api/logout`, {
@@ -170,9 +277,9 @@ export const AuthProvider = ({ children }) => {
 
       if ( res.ok ) {
         // navigate('/'); // Redirect to login after logout
-        toast.success(data.message || 'Logged out successfully!');
+        toast.success(data.message || 'Logged out successfully!')
       } else {
-        console.log('Error during logout:', error)
+        console.log('Error during logout:', data.message )
         toast.error(data.message || 'Logout failed.')
       }
     } catch (error) {
@@ -181,10 +288,14 @@ export const AuthProvider = ({ children }) => {
       // Even if error, typically log out on client side
     } finally {
       setUser(null);
-      setIsAuthenticated(false);
+      setIsAuthenticated(false)
       setIsLoading(false)
+      // Call the socket disconnect here
+      disconnectSocket()
+      // Clear chat data so the next person who logs in on this computer 
+      // doesn't see your old notifications for a split second
     }
-  };
+  },[ disconnectSocket ])
 
   // Run checkAuthStatus once on component mount
   useEffect(() => {
@@ -192,20 +303,68 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus(controller.signal)
     
     return () => {
-      controller.abort(); 
+      controller.abort()
     }
-  }, []);
+  }, [ checkAuthStatus ])
+
+  useEffect(() => {
+  // If we have a user and no active socket, connect!
+  if (user?._id && !socket) {
+    connectSocket();
+  }
+
+  // If the user is gone, disconnect!
+  if (!user?._id && socket) {
+    disconnectSocket();
+  }
+
+  // CLEANUP: If the component unmounts, kill the socket
+  return () => {
+    // Only wipe data if the user is actually logging out
+    // (i.e., user ID is now null)
+    if (!user?._id) {
+        setOnlineUser([])
+        // ONLY disconnect here if the component is truly unmounting 
+        // or if the user ID actually changed to null.
+        if (socket) {
+            socket.disconnect();
+            setSocket(null);
+        }
+    }
+  }
+}, [ user?._id, connectSocket, disconnectSocket ])
+
+  // This effect manages the EVENT LISTENERS
+  useEffect(() => {
+    if (!socket) return;
+
+    // 1. Define the function with a name
+    const handleOnlineUsers = ( userIds ) => {
+        setOnlineUser(userIds)
+      }
+    // 2. Start listening for online users event
+      socket.on("getOnlineUsers", handleOnlineUsers)
+
+    // 3. CLEANUP: This is where you disconnect "getOnlineUsers"
+    return () => {
+      socket.off("getOnlineUsers", handleOnlineUsers)
+    }
+  }, [socket]) // Runs whenever a new socket is created
 
   const authContextValue = useMemo(() => ({
     user,
     setUser,
     isAuthenticated,
     isLoading,
+    setIsLoading,
     signup,
     login,
+    googleLogin,
     logout,
     checkAuthStatus,
-  }), [user, setUser, isAuthenticated, isLoading, signup, login, logout, checkAuthStatus]); // Include functions in dependency array
+    onlineUsers,
+    socket
+  }), [user, setUser, isAuthenticated, isLoading, setIsLoading, signup, login, googleLogin, logout, checkAuthStatus, onlineUsers, socket ]); // Include functions in dependency array
 
   return (
     <AuthContext.Provider value={authContextValue}>

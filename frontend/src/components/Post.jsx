@@ -9,6 +9,7 @@ import Placeholder from "./Placeholder"
 import Avatar from "./Avatar"
 import UnfollowButton from "./UnfollowButton"
 import UnlikeButton from "./UnlikeButton"
+import GiftButton from "./GiftButton"
 
 const Post = ({ user, post ,comments, likePost, unlikePost, addComment, deletePost, followUser, unfollowUser, classNameOne="w-9/10 lg:w-2/3 mx-auto" }) => {
 
@@ -32,7 +33,9 @@ const Post = ({ user, post ,comments, likePost, unlikePost, addComment, deletePo
                         </Link>
                     </Placeholder>
                 )}
-                <div className="mt-3 mr-2">
+                <div className="mt-3 mr-2 flex no-wrap gap-3">
+                    {/* { user?._id !== post?.user?._id &&
+                    <GiftButton creatorId={post?.user?._id}/> } */}
                     {/* <!-- for follow and unfollow button --> */}
                     {/* <!-- show the follow/unfollow button when its not the users own posts --> */}
                         { user?.followingId?.includes(post?.user?._id) ? (

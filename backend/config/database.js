@@ -1,3 +1,4 @@
+// requiring mongoose to connect to mongodb.
 import mongoose from 'mongoose'
 
 export const connectDB = async () => {

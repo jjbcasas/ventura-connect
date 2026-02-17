@@ -6,7 +6,11 @@ const ProtectedRoute = () => {
     const { isAuthenticated, isLoading } = useAuth()
     
     if ( isLoading ) {
-          return <Spinner loading={isLoading} />
+              return (
+                <div className='min-h-100'>
+                    <Spinner loading={isLoading} />
+                </div>
+              )
         }
 
     // If the user is authenticated, render the child routes

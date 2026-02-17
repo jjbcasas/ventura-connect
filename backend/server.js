@@ -1,17 +1,15 @@
 import express from 'express'
 // initializes express
-const app = express()
-// requiring mongoose to connect to mongodb.
-import mongoose from 'mongoose'
+// const app = express()
 // package that helps us with our authentication or login
 import passport from 'passport'
 // to make a session for our users to stay logged in and then store our session info to mongodb
 // express-session creates the cookie
-import session from 'express-session'
+// import session from 'express-session'
 // mongostore stores the session object to our mongodb
-import MongoStore from 'connect-mongo' /*(session)*/
+// import MongoStore from 'connect-mongo' /*(session)*/
 // it shows alert msg when logging in/verification is a success or an error
-import flash from 'express-flash'
+// import flash from 'express-flash'
 // helps us log everything thats happening. to see all the requests coming thru
 import logger from 'morgan'
 // enable cross-origin requests
@@ -25,7 +23,11 @@ import feedRoutes from './routes/feed.js'
 import mainRoutes from './routes/main.js'
 import profileRoutes from './routes/profile.js'
 import postRoutes from './routes/post.js'
+import messageRoutes from "./routes/message.js"
+import tipRoute from "./routes/tip.js"
 import path from 'path'
+import cookieParser from 'cookie-parser'
+import { app, server } from './config/socket.js'
 // import { fileURLToPath } from 'url'
 
 
@@ -54,6 +56,7 @@ connectDB()
 // body parsing, so we can pull something from the request
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
+app.use(cookieParser())
 
 // logging
 app.use(logger('dev'))
@@ -73,38 +76,40 @@ app.use(
 )
 
 // setup sessions - stored in mongodb
-app.use(
-    session({
-        secret: 'keyboard cat',
-        resave: false,
-        saveUninitialized: false,
-        name: process.env.NODE_ENV === 'production' ? '__Host-session' : 'session',
-        store: MongoStore.create({
-            mongoUrl: process.env.DB_STRING
-        }),
-        // cookie configuration object for frontend and backend that are deployed on different domains
-        cookie: {
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            secure: process.env.NODE_ENV === 'production', // MUST be set to true for sameSite: 'none'
-            httpOnly: true, // Recommended for security
-            path: '/'
-        }
-        /*new MongoStore({ mongooseConnection: mongoose.connection})*/
-    })
-)
+// app.use(
+//     session({
+//         secret: 'keyboard cat',
+//         resave: false,
+//         saveUninitialized: false,
+//         name: process.env.NODE_ENV === 'production' ? '__Host-session' : 'session',
+//         store: MongoStore.create({
+//             mongoUrl: process.env.DB_STRING
+//         }),
+//         // cookie configuration object for frontend and backend that are deployed on different domains
+//         cookie: {
+//             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+//             secure: process.env.NODE_ENV === 'production', // MUST be set to true for sameSite: 'none'
+//             httpOnly: true, // Recommended for security
+//             path: '/'
+//         }
+//         /*new MongoStore({ mongooseConnection: mongoose.connection})*/
+//     })
+// )
 
 // Passport middleware
 app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.session())
 
 // use flash messages for errors, info, etc.
-app.use(flash())
+// app.use(flash())
 
 // Routes
 app.use('/api', mainRoutes)
 app.use('/api/feed', feedRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/post', postRoutes)
+app.use('/api/messages', messageRoutes)
+app.use('/api/tip', tipRoute)
 
 if ( process.env.NODE_ENV === 'production' ) {
     app.use(express.static(path.join(__dirname, '/frontend/dist')))
@@ -118,7 +123,8 @@ if ( process.env.NODE_ENV === 'production' ) {
 //     res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 // })
 
+// creates the http.createServer() for you behind the scenes. It's a shortcut.
 // server running
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}, you better catch it`)
 })

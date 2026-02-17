@@ -1,26 +1,33 @@
 import { useState, useRef } from "react"
+import { useApp } from "../context/AppContext"
+import { useChat } from "../context/ChatContext"
 import toast from 'react-hot-toast'
+import Spinner from "./Spinner"
+import useKeyboardSound from "../hooks/useKeyboardSound"
 
 const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w-1/2'}) => {
     const fileInputRef = useRef(null)
     const [ title, setTitle] = useState('')
     const [ caption, setCaption] = useState('')
+    const { loading } = useApp()
+    const { playRandomKeyStrokeSound } = useKeyboardSound()
+    const { isSoundEnabled } = useChat()
     // const [ image, setImage] = useState(null)
 
     const handleSubmit = async(e) => {
-        try {
-            e.preventDefault()
-    
-            // if(!image){
+        e.preventDefault()
+        
+        // if(!image){
             //     console.log('No file selected')
             //     return
             // }
             // const newPost = {
-            //     title,
+                //     title,
             //     caption,
             //     image
             // }
 
+            if ( isSoundEnabled ) playRandomKeyStrokeSound()
             const formData = new FormData(e.target)
             
             // Correctly check if a file was selected by checking its size
@@ -34,10 +41,11 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
             
             // to log each property of newFormData
             // for( const [key, value] of newFormData.entries()){
-            //     console.log(`${key}: `, value)
-            // }
-    
-            addPost(formData)
+                //     console.log(`${key}: `, value)
+                // }
+                
+        try {
+            await addPost(formData)
             
             if( fileInputRef.current) {
                 fileInputRef.current.value = ''
@@ -46,7 +54,7 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
             setTitle('')
             setCaption('')
         } catch (error) {
-            console.error(error)
+            console.error("Failed to add post:",error)
         }
     }
 
@@ -66,7 +74,11 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
                                 className="input w-full"
                                 required
                                 value={title}
-                                onChange={(e) => setTitle(e.target.value)} />
+                                onChange={(e) => {
+                                    setTitle(e.target.value)
+                                    isSoundEnabled && playRandomKeyStrokeSound()
+                                }}
+                                />
                         </div>
                         <div className={divWidth}>
                             <label 
@@ -79,7 +91,10 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
                                 className="input pt-2 w-full" 
                                 required
                                 value={caption}
-                                onChange={(e) => setCaption(e.target.value)}/>
+                                onChange={(e) => {
+                                    setCaption(e.target.value)
+                                    isSoundEnabled && playRandomKeyStrokeSound()
+                                }}/>
                         </div>
                         <div className={`w-2/3`}>
                             <label 
@@ -94,7 +109,9 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
                                 ref={ fileInputRef} />
                         </div>
                         <div className="w-1/3 pt-7 flex justify-end">
-                            <button type="submit" className="btn btn-neutral">Post</button>
+                            <button type="submit" className="btn btn-neutral" disabled={loading[`addPost`]} >
+                                {loading['addPost'] ? <Spinner size={20} /> : "Post"}
+                            </button>
                         </div>
                     </div>
                 </form>

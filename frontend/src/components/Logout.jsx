@@ -12,7 +12,7 @@ const Logout = () => {
             navigate('/')
         }
         performLogout()
-    }, [])
+    }, [ logout ])
 
   return (
     <h1 className="text-lg min-h-125 justify-center flex items-center">

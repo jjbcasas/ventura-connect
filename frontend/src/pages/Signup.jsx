@@ -5,26 +5,30 @@ import { useAuth } from '../context/AuthContext'
 
 const Signup = () => {
     const navigate = useNavigate()
-    const [ userName, setUserName] = useState('')
-    const [ email, setEmail] = useState('')
-    const [ password, setPassword] = useState('')
-    const [ confirmPassword, setConfirmPassword] = useState('')
+    const [ formData, setFormData ] = useState({ userName:"", email: "", password:"", confirmPassword:"" })
+    // const [ userName, setUserName] = useState('')
+    // const [ email, setEmail] = useState('')
+    // const [ password, setPassword] = useState('')
+    // const [ confirmPassword, setConfirmPassword] = useState('')
     const { signup } = useAuth()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const createUser = {
-            userName,
-            email,
-            password,
-            confirmPassword
-        }
-        
-        const result = await signup(createUser)
-
-        if ( result.success ) {
-            navigate('/feed')
+        // const createUser = {
+        //     userName,
+        //     email,
+        //     password,
+        //     confirmPassword
+        // }
+        try {
+            const result = await signup(/*createUser*/ formData )
+    
+            if ( result.success ) {
+                navigate('/feed')
+            }
+        } catch (error) {
+            console.error("Failed signing up:", error)
         }
     }
 
@@ -43,7 +47,7 @@ const Signup = () => {
                             </Link>
 
                             {/* Sign Up Form */}
-                            <fieldset className="fieldset w-full min-[340px]:w-xs bg-base-200 border border-base-300 p-4 mt-2 rounded-box">
+                            <fieldset className="fieldset w-full min-[340px]:w-xs bg-base-200 border border-base-300 px-4 py-2 mt-2 rounded-box">
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
                                         <label htmlFor="userName" className="fieldset-label">User Name</label>
@@ -53,8 +57,8 @@ const Signup = () => {
                                                 id="userName" 
                                                 name="userName" 
                                                 required
-                                                value={userName}
-                                                onChange={(e)=> setUserName(e.target.value)}
+                                                value={formData.userName}
+                                                onChange={(e)=> /*setUserName(e.target.value)*/ setFormData( prevData => ({ ...prevData, userName: e.target.value }))}
                                             />
                                     </div>
                                     <div className="mb-3">
@@ -66,8 +70,8 @@ const Signup = () => {
                                                 aria-describedby="emailHelp" 
                                                 name="email" 
                                                 required
-                                                value={email}
-                                                onChange={(e)=> setEmail(e.target.value)}
+                                                value={formData.email}
+                                                onChange={(e)=> setFormData(prevData => ({ ...prevData, email: e.target.value }))}
                                             />
                                         <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
                                     </div>
@@ -79,8 +83,8 @@ const Signup = () => {
                                                 id="password" 
                                                 name="password" 
                                                 required
-                                                value={password}
-                                                onChange={(e)=> setPassword(e.target.value)}
+                                                value={formData.password}
+                                                onChange={(e)=> setFormData( prevData => ({ ...prevData, password: e.target.value }))}
                                             />
                                     </div>
                                     <div className="mb-3">
@@ -91,11 +95,16 @@ const Signup = () => {
                                                 id="confirmPassword" 
                                                 name="confirmPassword" 
                                                 required
-                                                value={confirmPassword}
-                                                onChange={(e)=> setConfirmPassword(e.target.value)}
+                                                value={formData.confirmPassword}
+                                                onChange={(e)=> setFormData( prevData => ({ ...prevData, confirmPassword: e.target.value }))}
                                                 />
                                     </div>
                                     <button type="submit" className="btn btn-primary">Submit</button>
+                                    <div className="mt-2 text-center">
+                                        <Link to="/login" className='hover:text-cyan-500 text-sm'>
+                                            Already have an account?
+                                        </Link>
+                                    </div>
                                 </form>
                             </fieldset>
 

@@ -47,13 +47,9 @@ const Feed = () => {
                         setAllUsers(data.allUsers)
                         setComments(data.comments)
                     }
-
-                    setLoading(false)
                 } else {
                     console.error('Error fetching data:', data.message)
                     toast.error(data.message)
-
-                    setLoading(false)
                 }
                     // for Axios
                     // try {
@@ -78,15 +74,17 @@ const Feed = () => {
                         // }
                     //  } finally {
             } catch (error) {
-                if ( error instanceof Error && error.name === 'AbortError') {
+                if ( error.name === 'AbortError') {
                     console.log('Request was cancelled');
                     return; // Stop execution, no state should be set.
                 }
 
                 console.error('Error fetching data:',error)
                 toast.error('Could not connect to the server')
-                
-                setLoading(false)
+            } finally {
+                if (!controller.signal?.aborted) {
+                    setLoading(false)
+                }
             }
         }
         fetchData()
@@ -100,6 +98,17 @@ const Feed = () => {
         const updatedUser = ( data ) => {
             if ( data.updatedFollowing ) {
                 setUser( prevUser => ({...prevUser, followingId: data.updatedFollowing.followingId }))
+                setAllUsers( prevAllUser => {
+                    if (!prevAllUser) return []
+                    return prevAllUser.map( user => 
+                        user?._id === userId ?
+                            { 
+                                ...user,
+                                followerId: data.updatedFollow.followerId
+                            } : user
+                    )
+            })
+                
                 toast.success( data.message )
             }
         }
@@ -111,6 +120,17 @@ const Feed = () => {
         const updatedUser = ( data ) => {
             if ( data.updatedUnfollowing ) {
                 setUser( prevUser => ({...prevUser, followingId: data.updatedUnfollowing.followingId }))
+                setAllUsers( prevAllUser => {
+                    if (!prevAllUser) return []
+                    return prevAllUser.map( user => 
+                        user?._id === postId ?
+                            { 
+                                ...user,
+                                followerId: data.updatedUnfollow.followerId
+                            } : user
+                    )
+            })
+                
                 toast.success(data.message)
             }
         }
@@ -336,60 +356,59 @@ const Feed = () => {
 
   return (
     <section className="flex flex-wrap justify-evenly min-h-125">
-            <div className="w-3/4 sm:w-2/3 pt-4">
+        { loading ? (
+            <Spinner loading={loading} />
+        ) : (
+            <>
+                <div className="w-3/4 sm:w-2/3 pt-4">
                 
-                <div className="w-full md:w-3/4 mx-auto grow-1 px-2">
-                    <AddPost
-                        addPost={(formData)=> addPost(formData, '/api/feed/createPost')}
-                        fileInputRef={fileInputRef}
-                        width='w-full grow-2'
-                        divWidth='w-full'
-                    />
+                    <div className="w-full md:w-3/4 mx-auto grow-1 px-2">
+                        <AddPost
+                            addPost={(formData)=> addPost(formData, '/api/feed/createPost')}
+                            fileInputRef={fileInputRef}
+                            width='w-full grow-2'
+                            divWidth='w-full'
+                        />
+                    </div>
+                    <ul>
+                        { posts.map((post) => (
+                            <Post
+                                key={post._id}
+                                user={user}
+                                post={post}
+                                comments={comments}
+                                likePost={handleLikePost}
+                                unlikePost={handleUnlikePost} 
+                                addComment={( comment, postId ) => addComment(comment, postId, '/api/feed/comments/')}
+                                followUser={handleFollowUser}
+                                unfollowUser={ handleUnfollowUser}
+                                /*deletePost={handleDeletePost}*/
+                            />
+                        ))}
+                    </ul>
                 </div>
-                    { loading ? (
-                        <Spinner loading={loading} />
-                    ) : (
-                        <>
-                            <ul>
-                                { posts.map((post) => (
-                                    <Post
-                                        key={post._id}
-                                        user={user}
-                                        post={post}
-                                        comments={comments}
-                                        likePost={handleLikePost}
-                                        unlikePost={handleUnlikePost} 
-                                        addComment={( comment, postId ) => addComment(comment, postId, '/api/feed/comments/')}
-                                        followUser={handleFollowUser}
-                                        unfollowUser={ handleUnfollowUser}
-                                        /*deletePost={handleDeletePost}*/
-                                    />
+
+                {/* <!-- Right Section/Div --> */}
+                <div className="w-1/4 sm:w-1/3 min-[340]:px-1">
+                    {/* <Recommend /> */}
+                    <h3 className="text-[.6rem] sm:text-base text-center pt-4"><strong>Recommended people</strong></h3>
+                    <div className="card w-full bg-base-96 card-xs shadow-sm">
+                        <div className="card-body">
+                            <ul className="flex flex-wrap justify-center">
+                                { allUsers.map(users => (
+                                    !users?.followerId?.includes(user._id) &&
+                                        <ProfileRecommend
+                                            key={users?._id}
+                                            following={users}
+                                            width='w-16'
+                                        />
                                 ))}
                             </ul>
-                        </>
-                    )}
-
-            </div>
-
-            {/* <!-- Right Section/Div --> */}
-            <div className="w-1/4 sm:w-1/3 min-[340]:px-1">
-                    {/* <Recommend /> */}
-                <h3 className="text-[.6rem] sm:text-base text-center pt-4"><strong>Recommended people</strong></h3>
-                <div className="card w-full bg-base-96 card-xs shadow-sm">
-                    <div className="card-body">
-                        <ul className="flex flex-wrap justify-center">
-                            { allUsers.map(users => (
-                                !user?.followingId?.includes(users._id) &&
-                                    <ProfileRecommend
-                                        key={users._id}
-                                        following={users}
-                                        width='w-16'
-                                    />
-                            ))}
-                        </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
+        )}
     </section>
   )
 }

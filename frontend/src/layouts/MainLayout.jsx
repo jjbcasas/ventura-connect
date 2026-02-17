@@ -43,11 +43,14 @@ const MainLayout = () => {
   //     }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header user={user} />
-      <Outlet /*context={{ user, setUser , messages, setMessages }}*/ />
+      {/* The 'flex-grow' pushes the footer down */}
+      <main className="flex-grow">
+          <Outlet /*context={{ user, setUser , messages, setMessages }}*/ />
+      </main>
       <Footer />
-    </>
+    </div>
   )
 }
 
