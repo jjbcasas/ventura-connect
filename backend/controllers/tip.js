@@ -161,7 +161,6 @@ export const handleStripeWebhook = async (req, res) => {
         // for Idempotency check
         // Check if we have already processed this specific session
         const existingTip = await Tip.findOne({ stripeSessionId: session.id });
-
         if (existingTip) {
             console.log(`Duplicate event received for session: ${session.id}. Skipping.`);
             return res.status(200).json({ received: true }); // Return 200 so Stripe stops retrying
@@ -169,7 +168,7 @@ export const handleStripeWebhook = async (req, res) => {
         
         try {
             // NOW save the tip to your database
-            const tip = await Tip.create({
+            await Tip.create({
                 tipperId: session.metadata.tipperId,
                 creatorId: session.metadata.creatorId,
                 amount: session.amount_total / 100,
@@ -182,6 +181,20 @@ export const handleStripeWebhook = async (req, res) => {
             console.error("Database Error while saving tip:", dbError.message)
         }
     }
+
+    // Handle Account Updates (To sync your chargesEnabled status!)
+    // if (event.type === 'account.updated') {
+    //     const account = event.data.object;
+    //     try {
+    //         await User.findOneAndUpdate(
+    //             { stripeAccountId: account.id },
+    //             { chargesEnabled: account.charges_enabled }
+    //         );
+    //         console.log(`Account ${account.id} updated: charges_enabled = ${account.charges_enabled}`);
+    //     } catch (err) {
+    //         console.error("User Update Error:", err.message);
+    //     }
+    // }
 
     res.status(200).json({ received: true });
 };

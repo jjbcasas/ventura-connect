@@ -96,23 +96,28 @@ const GiftButton = ({ stripePayment, marginTop = 0, creatorId, loading }) => {
                 ))}
                 {/* Custom input and submit */}
                 <div className='w-2/6 flex gap-1'>
-                    <input
-                        type="number"
-                        placeholder="Amount"
-                        className='input w-1/2 mr-1 text-xs text-center'
-                        value={amount}
-                        onChange={(e)=> {
-                            setAmount(e.target.value) 
-                            isSoundEnabled && playRandomKeyStrokeSound()
-                        }}
-                    />
+                    <label className="input w-2/3 mr-1">
+                        <span className="label w-1/4">$</span>
+                        <input
+                            type="number"
+                            placeholder="0"
+                            // className='input w-3/4 text-xs text-left'
+                            value={amount}
+                            onChange={(e)=> {
+                                setAmount(e.target.value) 
+                                isSoundEnabled && playRandomKeyStrokeSound()
+                            }}
+                        />
+                    </label>
                     <button
                         type="button"
-                        className='btn btn-primary w-1/2'
+                        className='btn btn-primary w-1/3'
                         value={amount}
                         onClick={handlePayment}
                     >
-                        <Check />
+                        <Check
+                            className={loading ? 'loading' : ''}
+                        />
                     </button>
                 </div>
             </div>

@@ -257,24 +257,26 @@ const Profile = () => {
                             {
                                 accountUser?._id !== user?._id && (
                                     
-                                    <div className="flex no-wrap px-12">
+                                    <div className="flex no-wrap w-full justify-center gap-3">
                                         { accountUser?.stripeAccountId && chargesEnabled && (
                                             <GiftButton
                                                 stripePayment={handleStripePayment}
                                                 creatorId={accountUser?._id}
                                                 loading={paymentLoading}
-                                                marginTop={"mt-2"}
+                                                marginTop={"mt-2 mr-0"}
                                             />
                                         ) }
                                         {accountUser?.followerId?.includes(user?._id) ? (
                                                 <UnfollowButton
                                                     classNameOne='mt-2'
+                                                    margin="ml-0"
                                                     userId={accountUser?._id}
                                                     unfollowUser={ handleUnfollowUser }
                                                 />
                                         ):(
                                                 <FollowButton
-                                                    classNameOne='mt-2'
+                                                    classNameOne='mt-2 ml-0'
+                                                    margin="ml-0"
                                                     userId={accountUser?._id}
                                                     followUser={handleFollowUser}
                                                 />

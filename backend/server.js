@@ -25,6 +25,7 @@ import profileRoutes from './routes/profile.js'
 import postRoutes from './routes/post.js'
 import messageRoutes from "./routes/message.js"
 import tipRoute from "./routes/tip.js"
+import { handleStripeWebhook } from './controllers/tip.js';
 import path from 'path'
 import cookieParser from 'cookie-parser'
 import { app, server } from './config/socket.js'
@@ -52,11 +53,6 @@ connectDB()
 
 // static folder
 // app.use(express.static('public'))
-
-// body parsing, so we can pull something from the request
-app.use(express.urlencoded({extended: true}))
-app.use(express.json())
-app.use(cookieParser())
 
 // logging
 app.use(logger('dev'))
@@ -102,6 +98,14 @@ app.use(passport.initialize())
 
 // use flash messages for errors, info, etc.
 // app.use(flash())
+
+app.post('/api/tip/webhook/payment', express.raw({ type: 'application/json' }), handleStripeWebhook )
+
+
+// body parsing, so we can pull something from the request
+app.use(express.urlencoded({extended: true}))
+app.use(express.json())
+app.use(cookieParser())
 
 // Routes
 app.use('/api', mainRoutes)

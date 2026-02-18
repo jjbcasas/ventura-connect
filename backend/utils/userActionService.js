@@ -1,9 +1,9 @@
-import cloudinary from '../middleware/cloudinary.js'
-import Post from '../models/Post.js'
-import User from '../models/User.js'
-import Comment from '../models/Comment.js'
-import mongoose from 'mongoose'
-import fs from 'fs' // Import File System
+import cloudinary from '../middleware/cloudinary.js';
+import Post from '../models/Post.js';
+import User from '../models/User.js';
+import Comment from '../models/Comment.js';
+import mongoose from 'mongoose';
+import fs from 'fs'; // Import File System
 
 export const createPost = async ( req, res ) => { 
     let uploadResult
@@ -14,7 +14,7 @@ export const createPost = async ( req, res ) => {
         if ( !title || !caption ) {
             return res.status(400).json({ message: 'Please provide all fields.'})
         }
-        if ( !req.file ) {
+        if ( !req.file || !req.file.path ) {
             return res.status(400).json({ message: 'No image file uploaded.'})
         }
         uploadResult = await cloudinary.uploader.upload(req.file.path)
@@ -45,7 +45,10 @@ export const createPost = async ( req, res ) => {
     } finally {
         // CLEANUP: Delete the temp file from YOUR server
         if (req.file?.path) {
-            fs.unlinkSync(req.file.path); 
+            fs.unlink(req.file.path, (err) => {
+            // We don't even need to log this error, because if it's missing, 
+            // it means the middleware likely already deleted it!
+        });
         }
     }
 }
@@ -262,7 +265,10 @@ export const createComment = async ( req, res ) => {
     } finally {
         // CLEANUP: Delete the temp file from YOUR server
         if (req.file?.path) {
-            fs.unlinkSync(req.file.path); 
+            fs.unlink(req.file.path, (err) => {
+            // We don't even need to log this error, because if it's missing, 
+            // it means the middleware likely already deleted it!
+            });
         }
     }
 }
@@ -444,7 +450,10 @@ export const uploadProfilePhoto = async ( req, res ) => {
     } finally {
         // CLEANUP: Delete the temp file from YOUR server
         if (req.file?.path) {
-            fs.unlinkSync(req.file.path); 
+            fs.unlink(req.file.path, (err) => {
+            // We don't even need to log this error, because if it's missing, 
+            // it means the middleware likely already deleted it!
+        });(req.file.path); 
         }
     }
 }

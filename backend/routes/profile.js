@@ -5,12 +5,13 @@ import { protectRoute } from '../middleware/auth.js'
 import { getProfile, createPostInProfile, likePostInProfile, minusLikeInProfile, deletePostInProfile, followUserInProfile, unfollowUserInProfile, uploadProfilePhotoInProfile, createCommentInProfile } from '../controllers/profile.js'
 import { arcjetProtection } from '../middleware/arcjet.js'
 import { handleUpload } from '../middleware/handleUpload.js'
+import { moderateImage } from '../middleware/contentModeration.js'
 
 router.use( arcjetProtection, protectRoute )
 
 // Profile Routes
 router.get('/:id', getProfile)
-router.post('/createPost', handleUpload(upload.single('file')), createPostInProfile)
+router.post('/createPost', handleUpload(upload.single('file')), moderateImage, createPostInProfile)
 router.put('/likePost/:id', likePostInProfile)
 router.put('/minusLikePost/:id', minusLikeInProfile)
 router.delete('/deletePost/:id', deletePostInProfile)

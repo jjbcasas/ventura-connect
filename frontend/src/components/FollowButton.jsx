@@ -4,13 +4,13 @@ import Spinner from "./Spinner"
 import useKeyboardSound from "../hooks/useKeyboardSound"
 
 
-const FollowButton = ({classNameOne, followUser, userId}) => {
+const FollowButton = ({classNameOne, followUser, userId, margin="mx-auto"}) => {
   const { loading } = useApp()
   const { playRandomKeyStrokeSound } = useKeyboardSound()
   const { isSoundEnabled } = useChat()
 
   return (
-    <div className="w-20 mx-auto"> 
+    <div className={`w-20 ${margin}`}> 
         <button
           className={`btn btn-soft btn-primary w-full ${classNameOne}`}
           type="button"
