@@ -6,7 +6,7 @@ import express from 'express'
 import logger from 'morgan'
 // enable cross-origin requests
 import cors from 'cors'
-// parses jwt cookie from the request body
+// parses cookies from the request headers and populates req.cookies
 import cookieParser from 'cookie-parser'
 // requires dotenv for us to use environment variables
 import dotenv from 'dotenv'
@@ -22,15 +22,14 @@ import { handleStripeWebhook } from './controllers/tip.js';
 import { app, server } from './config/socket.js'
 // import { fileURLToPath } from 'url'
 
-const __dirname = path.resolve()
-
-app.set('trust proxy', 1)
-
-// use .env file in config folder
+// Load .env variables first
 dotenv.config({ path: './backend/config/.env'})
 
 // connect to the Database
 connectDB()
+
+const __dirname = path.resolve()
+app.set('trust proxy', 1)
 
 // static folder
 // app.use(express.static('public'))
@@ -43,8 +42,7 @@ const allowedOrigins = [
     process.env.BACKEND_URL
 ]
 
-// cors middleware
-// cors header
+// cors middleware & cors header
 app.use(
     cors({
         origin: allowedOrigins,
@@ -52,10 +50,7 @@ app.use(
     })
 )
 
-// Passport middleware
-app.use(passport.initialize())
-
-// Route for webhook, must be before the express.json()
+// Route for Stripe Webhook, must be before the express.json()
 app.post('/api/tip/webhook/payment', express.raw({ type: 'application/json' }), handleStripeWebhook )
 
 // body parsing, so we can pull something from the request
@@ -71,6 +66,7 @@ app.use('/api/post', postRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/tip', tipRoute)
 
+// Production Static Assets
 if ( process.env.NODE_ENV === 'production' ) {
     app.use(express.static(path.join(__dirname, '/frontend/dist')))
     app.get('/*path', (req, res) => {
@@ -78,8 +74,8 @@ if ( process.env.NODE_ENV === 'production' ) {
     })
 }
 
-// creates the http.createServer() for you behind the scenes. It's a shortcut.
-// server running
+// Creates the http.createServer() for you behind the scenes. It's a shortcut.
+// Start Server
 server.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}, you better catch it`)
 })
