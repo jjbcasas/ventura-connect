@@ -2,10 +2,8 @@ import { useState, useRef } from "react"
 import { useAuth } from "../context/AuthContext"
 import { useApp } from "../context/AppContext"
 // import { useChat } from "../context/ChatContext"
-// import { Volume2Icon,VolumeOffIcon } from "lucide-react"
 import toast from 'react-hot-toast'
 import Upload from "../components/Upload"
-// import Spinner from "./Spinner"
 
 // const mouseClickSound = new Audio("/sounds/mouse-click.mp3")
 
@@ -16,67 +14,6 @@ const ProfileHeader = () => {
     // const [ selectedImg, setSelectedImg ] = useState(null)
 
     const fileInputRef = useRef(null)
-
-    // const handleImageUpload = async (e) => {
-    //     const file = e.target.files[0]
-    //     if(!file){
-    //         // console.log('No file selected')
-    //         // toast.error('Please select an image file.')
-    //         return
-    //     }
-    //     if (!file.type.startsWith("image/")) {
-    //         toast.error("Please select an image file");
-    //         return;
-    //     }
-
-    //     // Create a local preview: Convert the file to a Base64 string so the user 
-    //     // sees their new photo immediately without waiting for the server upload.
-    //     const reader = new FileReader()
-    //     reader.onloadend = () => setSelectedImg(reader.result) 
-    //     // This updates the <img> src locally
-    //     reader.readAsDataURL(file)
-
-    //     // Handle the Upload (FormData)
-    //     try {
-    //         const formData = new FormData(/*file*/)
-    //         formData.append("file",file)
-            
-    //         await uploadPhoto(formData, `/api/messages/uploadProfilePhoto`, ()=> setSelectedImg(null))
-
-    //         // toast.success("Profile photo updated!");
-
-    //         // Clear the input so the user can select the same file again if they want
-    //         if (fileInputRef.current) {
-    //             fileInputRef.current.value = '';
-    //         }
-    //     } catch (error) {
-    //         console.error("Upload Error:", error);
-    //         // toast.error(error.response?.data?.message || "Failed to upload photo.");
-    //         // Optional: clear the preview if the upload failed
-    //         // setSelectedImg(null)
-    //     }
-        
-    //     // try {
-    //     //             e.preventDefault()
-        
-    //     //             const formData = new FormData(e.target.files[0])
-        
-    //     //             if(!formData.get('file')){
-    //     //                 console.log('No file selected')
-    //     //                 toast.error('Please select an image file.')
-    //     //                 return
-    //     //             }
-        
-    //     //             uploadPhoto(formData)
-                    
-    //     //             if( fileInputRef.current) {
-    //     //                 fileInputRef.current.value = ''
-    //     //             }
-        
-    //     //         } catch (error) {
-    //     //             console.error(error)
-    //     //         }
-    // }
 
   return (
     <div className="p-6 border-b border-slate-700/50">

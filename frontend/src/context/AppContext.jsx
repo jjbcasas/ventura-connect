@@ -83,7 +83,7 @@ export const AppProvider = ({ children }) => {
             console.error('Error deleting post:', error)
             toast.error('Could not connect to the server')
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
             setSpecificLoading(`deletePost_${postId}`, false )
         }
@@ -125,7 +125,7 @@ export const AppProvider = ({ children }) => {
             }
             throw error /* re-throwing the one you just caught hence just throw error */
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
             setSpecificLoading(`addComment_${postId}`, false )
         }
@@ -154,9 +154,8 @@ export const AppProvider = ({ children }) => {
             console.error('Error following a user:', error)
             toast.error('Could not connect to the server')
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
-            // setLoading(false); 
             setSpecificLoading(`followUser_${userId}`, false )
         }
     }, [] )
@@ -184,16 +183,14 @@ export const AppProvider = ({ children }) => {
             console.error('Error unfollowing a user:', error)
             toast.error('Could not connect to the server')
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
-            // setLoading(false); 
             setSpecificLoading(`unfollowUser_${userId}`, false )
         }
     }, [] )
 
     const likePost = useCallback( async (postId, callback, apiUrl ) => {
         try {
-            // setLoading(true)
             setSpecificLoading(`likePost_${postId}`, true )
             const res = await fetch(`${apiUrl}${postId}`,{
                 method: 'PUT',
@@ -222,16 +219,14 @@ export const AppProvider = ({ children }) => {
             console.error('Error in liking post:', error)
             toast.error('Could not connect to the server')
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
-            // setLoading(false); 
             setSpecificLoading(`likePost_${postId}`, false )
         }
     }, [] )
 
     const unlikePost = useCallback( async ( postId, callback, apiUrl ) => {
         try {
-            // setLoading(true)
             setSpecificLoading(`unlikePost_${postId}`, true )
             const res = await fetch(`${apiUrl}${postId}`,{
                 method: 'PUT',
@@ -256,9 +251,8 @@ export const AppProvider = ({ children }) => {
             console.error('Error in unliking post:', error)
             toast.error('Could not connect to the server')
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
-            // setLoading(false);
             setSpecificLoading(`unlikePost_${postId}`, false )
         }
     }, [] )
@@ -302,7 +296,7 @@ export const AppProvider = ({ children }) => {
             }
             throw error /* re-throwing the one you just caught hence just throw error */
         } finally {
-            // 3. This runs regardless of success or failure
+            // This runs regardless of success or failure
             // We only reach here if the request wasn't aborted
             setSpecificLoading(`uploadPhoto`, false )
         }
@@ -321,14 +315,12 @@ export const AppProvider = ({ children }) => {
             if ( res.ok ) {
                 if ( data?.searchResult ){
                     setUserResults(data?.searchResult || [] )
-                    // toast.success(data.message)
                 }
             } else {
                 console.log('Error searching user: ', data.message)
-                // toast.error(data.message)
             }
         } catch (error) {
-            // 1. Check if it's a cancellation first
+            // Check if it's a cancellation first
             if ( error.name === 'AbortError') {
                 // Silently stop. No console log needed in production, 
                 // but helpful during dev.

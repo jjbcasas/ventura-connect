@@ -3,19 +3,23 @@ import mongoose from 'mongoose'
 const PostSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     image: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     cloudinaryId: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     caption: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     likes: {
         type: Number,
@@ -27,7 +31,8 @@ const PostSchema = new mongoose.Schema({
     },
     userName: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     createdAt: {
         type: Date,

@@ -1,10 +1,9 @@
-import cloudinary from '../middleware/cloudinary.js'
 import Post from '../models/Post.js'
-import User from '../models/User.js'
 import Comment from '../models/Comment.js'
 import mongoose from 'mongoose'
 import { likePost, minusLike, deletePost, createComment, followUser, unfollowUser, uploadProfilePhoto } from '../utils/userActionService.js'
 
+// Post Controller
 export const getPost = async(req, res) => {
     try {
         const { id } = req.params

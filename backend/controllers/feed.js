@@ -1,10 +1,9 @@
-import cloudinary from '../middleware/cloudinary.js'
 import Post from '../models/Post.js'
 import User from '../models/User.js'
 import Comment from '../models/Comment.js'
-import mongoose from 'mongoose'
-import { createPost, likePost, minusLike, /*deletePost,*/ createComment, followUser, unfollowUser } from '../utils/userActionService.js'
+import { createPost, likePost, minusLike, createComment, followUser, unfollowUser } from '../utils/userActionService.js'
 
+// Feed Controller
 export const getFeed = async ( req, res ) => {
     try {
         // const user = req.user
@@ -35,6 +34,7 @@ export const getFeed = async ( req, res ) => {
     }
 }
 
+// Search Controller
 export const getSearch = async ( req, res ) => {
     try {
         const name = req.query.name?.trim() // const { name } = req.query

@@ -33,17 +33,12 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
             // Correctly check if a file was selected by checking its size
             const file = formData.get('file');
 
-            if (file.size === 0) {
+            if ( !file || file.size === 0) {
                 console.log('No file selected');
                 toast.error('Please select an image file.');
                 return;
             }
             
-            // to log each property of newFormData
-            // for( const [key, value] of newFormData.entries()){
-                //     console.log(`${key}: `, value)
-                // }
-                
         try {
             await addPost(formData)
             
@@ -105,7 +100,7 @@ const AddPost = ({width='w-full', classNameOne='mx-auto', addPost, divWidth = 'w
                                 type="file" 
                                 name="file" 
                                 id="imageUpload" className="file-input w-full" 
-                                // required
+                                required
                                 ref={ fileInputRef} />
                         </div>
                         <div className="w-1/3 pt-7 flex justify-end">

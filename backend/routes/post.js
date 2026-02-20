@@ -6,18 +6,17 @@ import { protectRoute } from '../middleware/auth.js'
 import { arcjetProtection } from '../middleware/arcjet.js'
 import { handleUpload } from '../middleware/handleUpload.js'
 
+// Middlewares for Rate Limiting and jwt authentication
 router.use( arcjetProtection, protectRoute )
 
 // Post Routes
 router.get('/:id', getPost)
-// router.post('/createPost/:id', upload.single('file'), postController.createPost)
+router.patch('/uploadProfilePhoto', handleUpload(upload.single('file')), uploadProfilePhotoInPost)
 router.put('/likePost/:id', likePostInPost)
 router.put('/minusLikePost/:id', minusLikeInPost)
-router.delete('/deletePost/:id', deletePostInPost)
 router.put('/followUser/:id', followUserInPost)
 router.put('/unfollowUser/:id', unfollowUserInPost)
 router.post('/comments/:id', createCommentInPost)
-router.patch('/uploadProfilePhoto', handleUpload(upload.single('file')), uploadProfilePhotoInPost)
-// router.put('/changeProfilePhoto', upload.single('file'), changeProfilePhotoInPost)
+router.delete('/deletePost/:id', deletePostInPost)
 
 export default router

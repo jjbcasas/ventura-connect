@@ -59,6 +59,7 @@ const ChatContainer = () => {
         const controller = new AbortController()
         const observer = new IntersectionObserver(
             ( entries ) => {
+                // Use a functional check inside the callback
                 // ensures that the "load history" logic only becomes active after the user is looking at the initial messages
                 if (entries[0].isIntersecting && isInitialScrollDone.current && messages.length >= 20 && !loading['loadOldMessages'] && 
                     !loading['getMessagesByUserId']) {
@@ -66,8 +67,11 @@ const ChatContainer = () => {
                     if (scrollRef.current) {
                         setPrevHeight(scrollRef.current.scrollHeight);
                     }
-                    const oldestMessageTimestamp = messages[0].createdAt;
-                    loadOldMessages(oldestMessageTimestamp, controller.signal);
+                    // Get the timestamp right when needed
+                    const oldestMessageTimestamp = messages[0]?.createdAt;
+                    if (oldestMessageTimestamp) {
+                        loadOldMessages(oldestMessageTimestamp, controller.signal);
+                    }
                 }
             },
             { threshold: 0.1 } // Trigger only when fully visible
@@ -76,9 +80,9 @@ const ChatContainer = () => {
 
         return () => {
             observer.disconnect();
-            controller?.abort();
+            controller.abort();
         }
-    }, [ messages.length, loadOldMessages, loading['loadOldMessages'], loading['getMessagesByUserId'], selectedUser?._id ])
+    }, [ messages.length, loadOldMessages, selectedUser?._id ])
 
     // THE FREEZE LOGIC: useLayoutEffect runs BEFORE the browser repaints
     useLayoutEffect(() => {
@@ -96,6 +100,7 @@ const ChatContainer = () => {
         }
     }, [messages, loading['loadOldMessages']]);
 
+    // Scroll-to-view
     useEffect(() => {
         let timer
         // Only auto-scroll to bottom if we aren't loading historical messages

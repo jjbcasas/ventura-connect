@@ -63,19 +63,10 @@ export const checkoutSession = async ( req, res ) => {
             cancel_url: `${clientUrl}/profile/${req.params.id}`
         })
 
-        // NOTE: If you save Tip.create() here, it's unverified. 
-        // It's better to do this in a Webhook!
-        // const tip = await Tip.create({
-        //     tipperId: tipper._id,
-        //     creatorId: creator._id,
-        //     amount: req.body.amount
-        //     // session: session.id
-        // })
-
         res.status(200).json({
             sessionId: session.id,
             sessionUrl: session.url,
-            message: "Success!"
+            // message: "Success!"
         })
     } catch (error) {
         console.error("Payment error: ", error.message)
@@ -198,32 +189,3 @@ export const handleStripeWebhook = async (req, res) => {
 
     res.status(200).json({ received: true });
 };
-
-// export const resumeOnboarding = async (req, res) => {
-//     try {
-//         const { user } = req;
-//         const clientUrl = process.env.NODE_ENV === 'development' 
-//             ? 'http://localhost:5173' 
-//             : process.env.FRONTEND_URL
-
-//         if (!user.stripeAccountId) {
-//             return res.status(400).json({ message: "No Stripe account found to resume." });
-//         }
-
-//         // Generate a new link for the existing account
-//         const accountLink = await stripe.accountLinks.create({
-//             account: user.stripeAccountId,
-//             refresh_url: `${clientUrl}/profile/${user._id}`,
-//             return_url: `${clientUrl}/stripe-onboarding-success`,
-//             type: 'account_onboarding',
-//         });
-
-//         res.status(200).json({
-//             url: accountLink.url,
-//             message: "Continue your Onboarding."
-//         });
-//     } catch (error) {
-//         console.error("Resume Onboarding Error:", error);
-//         res.status(500).json({ message: "Could not generate onboarding link." });
-//     }
-// };

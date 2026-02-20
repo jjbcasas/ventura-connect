@@ -1,7 +1,7 @@
 import { useChat } from "../context/ChatContext"
 
 const ActiveTabSwitch = () => {
-    const { activeTab, setActiveTab, setAllContacts, setChats, setSpecificLoading, /*getChatPartners, getAllContacts, selectedUser, setSelectedUser*/ } = useChat()
+    const { activeTab, setActiveTab, setAllContacts, setChats, setSpecificLoading, } = useChat()
 
   return (
     <div className="tabs tabs-box flex justify-center p-2 m-2">

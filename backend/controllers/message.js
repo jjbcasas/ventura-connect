@@ -10,9 +10,15 @@ export const getAllContacts = async ( req, res ) => {
     try {
         const { _id: userId } = req.user
         const myContacts = await User.find({
-            _id: { $ne: userId }, followingId: userId
+            _id: { $ne: userId }, $or: [
+                { followingId: userId }, // They follow me
+                { _id: { $in: req.user.followingId || [] }} // I follow them
+            ]
         })
-        .select("-password").lean()
+        .select("-password")
+        .sort({ userName: 'asc'})
+        .collation({ locale: 'en', strength: 2 }) // Strength 2 ignores case differences
+        .lean()
 
         // Handle Empty Results gracefully
         if (!myContacts || myContacts.length === 0) {
@@ -40,22 +46,43 @@ export const getChatPartners = async (req, res ) => {
         const { _id: myId } = req.user
 
         // Find all messages related to me and get the unique IDs of everyone. Either sender or receiver is me
-        const [ sentTo, receivedFrom ] = await Promise.all([
-            Message.distinct("receiverId", { senderId: myId }),
-            Message.distinct("senderId", { receiverId: myId })
-        ])
+        // const [ sentTo, receivedFrom ] = await Promise.all([
+        //     Message.distinct("receiverId", { senderId: myId }),
+        //     Message.distinct("senderId", { receiverId: myId })
+        // ])
 
         // Combine and remove duplicates
-        const chatPartnerIds = [ ...new Set([ ...sentTo, ...receivedFrom ]) ]
+        // const chatPartnerIds = [ ...new Set([ ...sentTo, ...receivedFrom ]) ]
+
+        // Get messages sorted by newest first
+        const messages = await Message.find({
+            $or: [ { senderId: myId }, { receiverId: myId } ]
+        }).sort({ createdAt: -1}).lean()
+
+        // Extract unique partner IDs while preserving order
+        const partnerIds = messages.map( msg => {
+            return msg.receiverId.toString() === myId.toString()
+                ? msg.senderId.toString()
+                : msg.receiverId.toString()
+        })
+        
+        // Remove Duplicates
+        const chatPartnerIds = [ ...new Set(partnerIds)]
 
         if (chatPartnerIds.length === 0) {
             return res.status(200).json({ chatPartners: [], message: "No chat partners found" })
         }
 
-        const chatPartners = await User.find({ 
+        // Look for and Fetch that User id
+        const users = await User.find({ 
             _id: { $in: chatPartnerIds }
         })
         .select("-password").lean()
+
+        // Re-sort the users to match our uniquePartnerIds order
+        const chatPartners = chatPartnerIds.map(id => 
+            users.find(u => u._id.toString() === id)
+        ).filter(Boolean); // Safety: filter out any nulls if a user was deleted
 
         // Handle Empty Results gracefully
         if (!chatPartners || chatPartners.length === 0) {

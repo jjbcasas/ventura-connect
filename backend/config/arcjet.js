@@ -1,6 +1,5 @@
 import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node"
 import dotenv from 'dotenv'
-import path from 'path'
 dotenv.config({ path: './backend/config/.env'})
 
 const aj = arcjet({

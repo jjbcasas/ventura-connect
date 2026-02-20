@@ -41,10 +41,4 @@ export const protectRoute = async ( req, res, next ) => {
             message: "Internal server error"
         })
     }
-
-    // if ( req.isAuthenticated()) {
-    //     return next()
-    // } else {
-    //     res.status(401).json({ message: 'Unauthorized' })
-    // }
 }

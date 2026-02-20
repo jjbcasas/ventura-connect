@@ -11,14 +11,13 @@ router.use( arcjetProtection, protectRoute )
 
 // Profile Routes
 router.get('/:id', getProfile)
-router.post('/createPost', handleUpload(upload.single('file')), moderateImage, createPostInProfile)
+router.patch('/uploadProfilePhoto', handleUpload(upload.single('file')), uploadProfilePhotoInProfile)
 router.put('/likePost/:id', likePostInProfile)
 router.put('/minusLikePost/:id', minusLikeInProfile)
-router.delete('/deletePost/:id', deletePostInProfile)
 router.put('/followUser/:id', followUserInProfile)
 router.put('/unfollowUser/:id', unfollowUserInProfile)
-router.patch('/uploadProfilePhoto', handleUpload(upload.single('file')), uploadProfilePhotoInProfile)
-// router.put('/changeProfilePhoto', upload.single('file'), changeProfilePhotoInProfile)
+router.post('/createPost', handleUpload(upload.single('file')), moderateImage, createPostInProfile)
 router.post('/comments/:id', createCommentInProfile)
+router.delete('/deletePost/:id', deletePostInProfile)
 
 export default router

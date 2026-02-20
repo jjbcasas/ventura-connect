@@ -15,7 +15,7 @@ const AddComment = ({addComment, postId}) => {
     e.preventDefault()
     
     if ( isSoundEnabled ) playRandomKeyStrokeSound()
-    // 3. Validation (Guard Clause)
+    // Validation (Guard Clause)
     if ( !comment ) {
       toast.error('Please add a comment')
       return
@@ -23,7 +23,6 @@ const AddComment = ({addComment, postId}) => {
     
     try {
       await addComment(comment, postId)
-      // toast.success('Comment added successfully!')
       setComment('')
     } catch (error) {
       console.error("Failed to add comment:", error)
@@ -38,7 +37,7 @@ const AddComment = ({addComment, postId}) => {
               className="w-full mb-2 pl-1" 
               name="comment" 
               placeholder="Write comments here..." 
-              // required
+              required
               value={comment}
               onChange={(e)=> {
                 setComment(e.target.value) 

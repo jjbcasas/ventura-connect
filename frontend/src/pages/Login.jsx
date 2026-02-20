@@ -1,10 +1,9 @@
-import { /*useOutletContext,*/useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google';
 import { FaArrowLeft } from 'react-icons/fa'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
-// import AlertMessages from '../components/AlertMessages'
 
 const Login = () => {
 
@@ -15,6 +14,7 @@ const Login = () => {
     // const { setUser /*, setMessages*/ } = useOutletContext()
     const { login, googleLogin } = useAuth()
 
+    // Handle Login
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -35,7 +35,7 @@ const Login = () => {
         }
     }
 
-    // 2. Handle Google Login
+    // Handle Google Login
     const handleGoogle = async (response) => {
         try {
             const result = await googleLogin(response);

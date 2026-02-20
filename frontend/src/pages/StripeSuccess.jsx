@@ -9,15 +9,7 @@ const StripeSuccess = () => {
     const sessionId = searchParams.get('session_id'); // Grabs the ID from the URL
     const creatorId = searchParams.get('creator_id'); // Grabs the ID from the URL
     const [status, setStatus] = useState('loading'); // 'loading', 'success', 'error'
-    
-    // useEffect(() => {
-    //     if (sessionId) {
-    //         console.log("Verifying payment for session:", sessionId);
-    //         // You could call your backend here to confirm the payment 
-    //         // before showing the success message.
-    //     }
-    // }, [sessionId]);
-    
+
     useEffect(() => {
         let timer;
         const verifyPayment = async () => {

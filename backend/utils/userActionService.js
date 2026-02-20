@@ -321,7 +321,7 @@ export const followUser = async ( req, res ) => {
         ])
         
         if (!updatedFollow || !updatedFollowing) {
-            // await session.abortTransaction() // Clean up before returning!
+            await session.abortTransaction() // Clean up before returning!
             return res.status(404).json({ message: 'User not found!' });
         }
 
@@ -393,7 +393,7 @@ export const unfollowUser = async ( req, res ) => {
         if (session.inTransaction()) {
             await session.abortTransaction();
         }
-        console.log('Error in Following User:', error.message)
+        console.log('Error in Unfollowing User:', error.message)
         res.status(500).json({message: 'Server Error!' })
     } finally {
         // Always end the session to free up server resources
@@ -414,11 +414,6 @@ export const uploadProfilePhoto = async ( req, res ) => {
         // Validate if the provided ID is a valid MongoDB ObjectId
         // if ( !mongoose.Types.ObjectId.isValid(id)){
         //     return res.status(404).json({message: 'Invalid User Id!'})
-        // }
-
-        // const user = await User.findById( userId )
-        // if (!user) {
-        //     return res.status(404).json({ message: 'User not found.' });
         // }
 
         if ( userId.cloudinaryId ) {

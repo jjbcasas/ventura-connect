@@ -1,12 +1,11 @@
 import { useState, useRef } from "react"
-// import { useApp } from "../context/AppContext"
 import toast from "react-hot-toast"
-// import Spinner from "./Spinner"
+import { useApp } from "../context/AppContext"
 
 const Upload = ({ submitPhoto, user, className ="w-full flex items-center justify-center" }) => {
     const fileInputRef = useRef(null)
     const [ selectedImg, setSelectedImg ] = useState(null)
-    // const { loading } = useApp()
+    const { loading } = useApp()
 
     const handleImageUpload = async (e) => {
             const file = e.target.files[0]
@@ -26,16 +25,16 @@ const Upload = ({ submitPhoto, user, className ="w-full flex items-center justif
             reader.onloadend = () => setSelectedImg(reader.result) 
             // This updates the <img> src locally
             reader.readAsDataURL(file)
-    
+
             // Handle the Upload (FormData)
             try {
                 const formData = new FormData(/*file*/)
                 formData.append("file",file)
                 
                 await submitPhoto(formData, ()=> setSelectedImg(null))
-    
+
                 // toast.success("Profile photo updated!");
-    
+
                 // Clear the input so the user can select the same file again if they want
                 if (fileInputRef.current) {
                     fileInputRef.current.value = '';
@@ -51,7 +50,7 @@ const Upload = ({ submitPhoto, user, className ="w-full flex items-center justif
             <button
                 className="size-14 rounded-full overflow-hidden relative group cursor-pointer"
                 onClick={() => fileInputRef.current.click()}
-                // disabled={loading[`uploadPhoto`]}
+                disabled={loading[`uploadPhoto`]}
             >
                 {(selectedImg || user?.profileImage) ? (
                     <img src={selectedImg || user?.profileImage} className="w-full flex items-center justify-center "/>

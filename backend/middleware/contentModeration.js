@@ -2,7 +2,7 @@ import client from '../config/googleVision.js';
 import fs from 'fs'
 
 export const moderateImage = async (req, res, next) => {
-    // 1. Get the image from the request (from Multer or your body)
+    // Get the image from the request (from Multer or your body)
     const imageUri = req.file?.path
 
     if (!imageUri) return next(); // Skip if no image

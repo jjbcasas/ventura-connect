@@ -1,5 +1,4 @@
 import multer from 'multer'
-import path from 'path'
 
 const imageUpload = multer({
     storage: multer.diskStorage({}),

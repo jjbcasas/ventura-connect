@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import AddPost from "../components/AddPost"
 import Spinner from "../components/Spinner"
-import { /*useOutletContext,*/ useParams} from "react-router-dom"
+import { useParams} from "react-router-dom"
 import toast from 'react-hot-toast'
 import Avatar from "../components/Avatar"
 import Placeholder from "../components/Placeholder"
@@ -40,8 +40,6 @@ const Profile = () => {
         unfollowUser,
         uploadPhoto
     } = useApp()
-    // const fileInputRef = useRef(null)
-    // const [ selectedImg, setSelectedImg ] = useState(null)
 
     useEffect( () => {
         const controller = new AbortController()

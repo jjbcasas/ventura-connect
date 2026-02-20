@@ -1,3 +1,4 @@
+// Handles Ghost errors from multer
 export const handleUpload = (uploadMiddleware) => {
     return (req, res, next) => {
         uploadMiddleware(req, res, (err) => {

@@ -10,7 +10,8 @@ const UserSchema = new mongoose.Schema({
     },
     // for Google Sign In
     googleId: {
-      type: String
+      type: String,
+      trim: true
     },
     email: {
         type: String,
@@ -32,38 +33,6 @@ const UserSchema = new mongoose.Schema({
       default: [],
       index: true // Makes searching fast for fields that you use frequently
     },
-    // What is better like this or just populate?
-    // followerId: {
-    //  default: {} or null,
-    //  type: new mongoose.Schema({
-    //    user_id: { 
-    //      type: [mongoose.Schema.Types.ObjectId],
-    //      default: []
-    //    },
-    //    userName: {
-    //       type: String,
-    //       required: true,
-    //       trim: true
-    //    },
-    //     profileImage: {
-    //        type: String
-    // }
-    // })
-    // }
-    // Follow array templates
-    // participants: [{
-    //     required: true,
-    //     type: new mongoose.Schema({
-    //         user_id: { type: String, required: true, default: null },
-    //         user_type: {
-    //             type: String,
-    //             required: true,
-    //             enum: ['creator', 'sponsor']
-    //         }
-    //     }, {
-    //         _id: false
-    //     })
-    // }]
     followingId: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'User',
@@ -79,13 +48,14 @@ const UserSchema = new mongoose.Schema({
     },
     cloudinaryId: {
       type: String,
+      trim: true
     },
     profileImage: {
-      type: String
+      type: String,
+      trim: true
     },
     stripeAccountId: {
-      type: String,
-      default: ""
+      type: String
     },
     // stripeOnboardingComplete: {
     //   type: Boolean,
@@ -95,6 +65,20 @@ const UserSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+    // Follow array templates
+    // participants: [{
+    //     required: true,
+    //     type: new mongoose.Schema({
+    //         user_id: { type: String, required: true, default: null },
+    //         user_type: {
+    //             type: String,
+    //             required: true,
+    //             enum: ['creator', 'sponsor']
+    //         }
+    //     }, {
+    //         _id: false
+    //     })
+    // }]
 }/*, { //this is for automatic creation of createdAt and UpdatedAt
   timestamps: true
 }*/)

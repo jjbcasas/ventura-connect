@@ -26,10 +26,10 @@ export const ChatProvider = ({ children }) => {
     const [ isSoundEnabled, setIsSoundEnabled ] = useState(() => {
         const saved = localStorage.getItem("isSoundEnabled");
     
-        // 1. If it's the first visit (null), default to true
+        // If it's the first visit (null), default to true
         if (saved === null) return true;
 
-        // 2. Convert the string "true" or "false" into a real boolean
+        // Convert the string "true" or "false" into a real boolean
         return saved === "true"; 
     })
 
@@ -378,6 +378,9 @@ export const ChatProvider = ({ children }) => {
                     } else {
                         console.log(data.message)
                     }
+                } else {
+                    console.error("Error Loading messages: ", data.message)
+                    toast.error(data.message)
                 }
     
             } catch (error) {
@@ -432,8 +435,6 @@ export const ChatProvider = ({ children }) => {
         setSelectedUser,
         isSoundEnabled,
         toggleSound,
-        // setTabs,
-        // setUsers,
         getAllContacts,
         getChatPartners,
         setSpecificLoading,

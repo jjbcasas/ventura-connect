@@ -19,8 +19,8 @@ import ProtectedRoute from './utils/ProtectedRoute'
 import Logout from './components/Logout'
 import Chat from './pages/Chat'
 import { ChatProvider } from './context/ChatContext'
-import Success from './pages/StripeSuccess'
 import StripeOnboardingSuccess from './pages/StripeOnboardingSuccess'
+import StripeSuccess from './pages/StripeSuccess'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,7 +36,7 @@ const router = createBrowserRouter(
         <Route path='/post/:id' element={<Post />}/>
         <Route path='/profile/:id' element={<Profile />}/>
         <Route path='/chat' element={<Chat />}/>
-        <Route path='/stripe-success' element={<Success />} />
+        <Route path='/stripe-success' element={<StripeSuccess />} />
         <Route path='/stripe-onboarding-success' element={<StripeOnboardingSuccess />} />
       </Route>
       {/* {isAuthenticated ? <Route path='/feed' element={<Feed />}/> : <Route path='/login' element={<Login />}/> } */}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import AddPost from "../components/AddPost"
 import Spinner from "../components/Spinner"
-import { /*useOutletContext,*/ useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import toast from 'react-hot-toast'
 import Avatar from "../components/Avatar"
 import Placeholder from "../components/Placeholder"
@@ -14,9 +14,6 @@ import { useAuth } from "../context/AuthContext"
 import { useApp } from "../context/AppContext"
 
 const Post = () => {
-    // const [comments, setComments] = useState([])
-    // const [accountUser, setAccountUser] = useState({})
-    //   const { user, setUser, /*setMessages*/ } = useOutletContext()
     const [post, setPost] = useState({})
     const [loading, setLoading] = useState(true)
     const { id } = useParams()
@@ -35,8 +32,6 @@ const Post = () => {
         deletePost,
         uploadPhoto
     } = useApp()
-    // const fileInputRef = useRef(null)
-    // const [ selectedImg, setSelectedImg ] = useState(null)
 
     useEffect( () => {
         const controller = new AbortController()
@@ -83,43 +78,6 @@ const Post = () => {
             controller.abort(); 
         }
     }, [id])
-
-    // const handleImageUpload = async (e) => {
-    //     const file = e.target.files[0]
-    //     if(!file){
-    //     // console.log('No file selected')
-    //     // toast.error('Please select an image file.')
-    //         return
-    //     }
-    //     if (!file.type.startsWith("image/")) {
-    //         toast.error("Please select an image file");
-    //         return;
-    //     }
-        
-    //     // Create a local preview: Convert the file to a Base64 string so the user 
-    //     // sees their new photo immediately without waiting for the server upload.
-    //     const reader = new FileReader()
-    //     reader.onloadend = () => setSelectedImg(reader.result) 
-    //     // This updates the <img> src locally
-    //     reader.readAsDataURL(file)
-        
-    //     // Handle the Upload (FormData)
-    //     try {
-    //         const formData = new FormData(/*file*/)
-    //         formData.append("file",file)
-                    
-    //         await uploadPhoto(formData, `/api/post/uploadProfilePhoto`, ()=> setSelectedImg(null))
-    
-    //         // toast.success("Profile photo updated!");
-        
-    //         // Clear the input so the user can select the same file again if they want
-    //         if (fileInputRef.current) {
-    //             fileInputRef.current.value = '';
-    //         }
-    //     } catch (error) {
-    //         console.error("Upload Error:", error)
-    //     }
-    // }
     
     const handleLikePost = ( postId ) => {
         const updatedPost = ( data ) => {
@@ -188,212 +146,6 @@ const Post = () => {
 
         deletePost( postId, updatedPost, `/api/post/deletePost/` )
     }
-
-    // const likePost = async (postId) => {
-    //     try {
-        //         // const res = await fetch(`/api/post/likePost/${postId}`,{
-    //         //     method: 'PUT',
-    //         //     credentials: 'include',
-    //         // })
-            
-    //         // const data = await res.json()
-            
-    //         if ( res.ok ) {
-    //             if ( data.updatedUser && data.updatedLike ) {
-    //                 // setUser( prevUser => ({...prevUser, likedPostId: data.updatedUser.likedPostId}))
-    //                 setPost( prevPost => ( prevPost._id === postId ? { ...prevPost, likes: data.updatedLike.likes } : prevPost )
-    //                 )
-    //                 // setAccountUser( prevAccountUser => ( prevAccountUser._id === user._id ? {...prevAccountUser, likedPostId: data.updatedUser.likedPostId } : prevAccountUser ))
-    //                 toast.success(data.message)
-    //             } else {
-    //                 console.error('Error in liking post:', data.message || 'Unknown error')
-    //                 toast.error(data.message)
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error in liking post:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-
-    // }
-    
-    // const unlikePost = async (postId) => {
-    //     try {
-    //         const res = await fetch(`/api/post/minusLikePost/${postId}`,{
-    //             method: 'PUT',
-    //             credentials: 'include',
-    //         })
-    
-    //         const data = await res.json()
-            
-    //         if ( res.ok ) {
-    //             if ( data.updatedUser && data.updatedLike ) {
-    //                 setUser( prevUser => ({...prevUser, likedPostId: data.updatedUser.likedPostId}))
-    //                 setPost( prevPost => ( prevPost._id === postId ? { ...prevPost, likes: data.updatedLike.likes } : prevPost ))
-    //                 setAccountUser( prevAccountUser => ( prevAccountUser._id === user._id ? {...prevAccountUser, likedPostId: data.updatedUser.likedPostId } : prevAccountUser ))
-    //                 toast.success(data.message)
-    //             }
-    //         } else {
-    //             console.error('Error in unliking post:', data.message || 'Unknown error')
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error in unliking post:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-        
-    // }
-
-    // const deletePost = async (postId) => {
-    //     try {
-    //         const res = await fetch(`/api/post/deletePost/${postId}`, {
-    //             method: 'DELETE',
-    //             credentials: 'include',
-    //         })
-            
-    //         const data = await res.json()
-            
-    //         if ( res.status === 200 ) {
-    //             setPost({})
-    //             navigate(`/profile/${user._id}`)
-    //             toast.success(data.message || 'Post deleted successfully!' )
-    //         } else {
-    //             console.error('Error deleting post:', data.message || 'Unknown error')
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error deleting post:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-    // }
-
-    // const followUser = async (userId) => {
-    //     try {
-    //         const res = await fetch(`/api/post/followUser/${userId}`,{
-    //             method: 'PUT',
-    //             credentials: 'include',
-    //         })
-    //         const data = await res.json()
-    
-    //         if( res.ok ) {
-    //             if ( data.updatedFollow ) {
-    //                 setAccountUser({...accountUser, followerId: data.updatedFollow.followerId})
-    //                 toast.success(data.message)
-    //             }
-    //         } else {
-    //             console.error('Error following a user:', data.message || 'Unknown error')
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error following a user:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-    // }
-
-    // const unfollowUser = async (userId) => {
-    //     try {
-    //         const res = await fetch(`/api/post/unfollowUser/${userId}`,{
-    //             method: 'PUT',
-    //             credentials: 'include',
-    //         })
-    //         const data = await res.json()
-    
-    //         if ( res.ok ) {
-    //             if ( data.updatedUnfollow ) {
-    //                 setAccountUser({...accountUser, followerId: data.updatedUnfollow.followerId })
-    //                 toast.success(data.message)
-    //             }
-    //         } else {
-    //             console.error('Error unfollowing a user:', data.message || 'Unknown error')
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error unfollowing a user:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-    // }
-
-    // const addComment = async(comment, postId) => {
-    //     try {
-    //         const res = await fetch(`/api/post/comments/${postId}`,{
-    //             method: 'POST',
-    //             credentials: 'include',
-    //             headers: {
-    //                 'Content-type': 'application/json'
-    //             },
-    //             body: JSON.stringify({comment}),
-    //         })
-
-    //         const data = await res.json()
-
-    //         if ( res.ok ) {
-    //             if (data.comment){
-    //                 setComments([ data.comment, ...comments ])
-    //                 toast.success(data.message)
-    //             }
-    //         } else {
-    //             console.error('Error adding a comment:', data.message || 'Unknown error')
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error adding a comment:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-    // }
-
-    // const uploadPhoto = async (formData) => {
-    //     try {
-    //         const res = await fetch(`/api/post/uploadProfilePhoto`, {
-    //             method: 'PUT',
-    //             credentials: 'include',
-    //             body: formData
-    //         })
-    //         const data = await res.json()
-
-    //         if ( res.ok ){
-    //             if ( data.newProfileImage.profileImage ){
-    //                 setUser({...user, profileImage: data.newProfileImage.profileImage})
-    //                 setAccountUser(
-    //                     accountUser._id === user._id
-    //                         ? {...accountUser, profileImage: data.newProfileImage.profileImage}
-    //                         : accountUser
-    //                 )
-    //                 toast.success(data.message)
-    //             }
-    //         } else {
-    //             console.error('Error uploading photo:', data.message)
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error uploading photo:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-    // }
-
-    // const changePhoto = async (formData) => {
-    //     try {
-    //         const res = await fetch(`/api/post/changeProfilePhoto`, {
-    //             method: 'PUT',
-    //             credentials: 'include',
-    //             body: formData
-    //         })
-    //         const data = await res.json()
-
-    //         if ( res.ok ){
-    //             if ( data.newProfileImage.profileImage ){
-    //                 setUser({...user, profileImage: data.newProfileImage.profileImage})
-    //                 setAccountUser( accountUser._id === user._id ? {...accountUser, profileImage: data.newProfileImage.profileImage} : {...accountUser})
-    //                 toast.success(data.message)
-    //             }
-    //         } else {
-    //             console.error('Error uploading photo:', data.message)
-    //             toast.error(data.message)
-    //         }
-    //     } catch (error) {
-    //         console.error('Error uploading photo:', error)
-    //         toast.error('Could not connect to the server')
-    //     }
-    // }
 
   return (
     <section>

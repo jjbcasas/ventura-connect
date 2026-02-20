@@ -30,7 +30,7 @@ const MessageInput = () => {
       if ( result.success ) {
         setText("")
         setImagePreview(null)
-        // 3. Clear the input so the user can select the same file again if they want
+        // Clear the input so the user can select the same file again if they want
         if (fileInputRef.current) fileInputRef.current.value = '';
       }
     } catch (error) {

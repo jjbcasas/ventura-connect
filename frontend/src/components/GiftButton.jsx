@@ -20,41 +20,10 @@ const GiftButton = ({ stripePayment, marginTop = 0, creatorId, loading }) => {
         }
         if ( isSoundEnabled ) playRandomKeyStrokeSound()
 
-        // console.log("Processing payment for: $", finalAmount)
-        
-        // try {
-            await stripePayment( creatorId, finalAmount )
-            // const res = await fetch(`/api/tip/checkout-session/${creatorId}`, {
-            //     method: 'POST',
-            //     headers: {
-            //         "Content-Type": "application/json"
-            //     },
-            //     body: JSON.stringify({finalAmount})
-            // })
-
-            // const data = await res.json()
-            
-            // if ( !res.ok ) {
-            //     throw new Error( data.message || "Payment Failed. Please try again.")
-            // }
-            // if ( result ){
-            //     if ( data.sessionUrl ) {
-            //         window.location.href = data.sessionUrl
-            //     }
-            //     setAmount('')
-            // }
-
-        // } catch (error) {
-        //     console.error("Payment processing error:", error)
-        //     toast.error(error.message || "Something went wrong with the payment.")
-        // }
+        await stripePayment( creatorId, finalAmount )
     }
 
   return (
-    // <button
-    //     className={`btn btn-soft btn-warning ${marginTop}`}>
-    //     <Gift />
-    // </button>
     <>
         <button
             //  for The "Inner" Glow, use inset shadow

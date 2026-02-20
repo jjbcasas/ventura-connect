@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
     const userId = socket.userId
     if (!userId) return;
 
-    // 1. Initialize the array if it doesn't exist, then add the new socketId
+    // Initialize the array if it doesn't exist, then add the new socketId
     if (!userSocketMap[userId]) {
         userSocketMap[userId] = [socket.id];
     } else {

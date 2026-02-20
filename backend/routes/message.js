@@ -6,8 +6,10 @@ import { arcjetProtection } from "../middleware/arcjet.js"
 import upload from "../middleware/multer.js"
 import { handleUpload } from "../middleware/handleUpload.js"
 
+// Middlewares for Rate Limiting and jwt authentication
 router.use( arcjetProtection, protectRoute )
 
+// Message Routes
 router.get("/contacts", getAllContacts )
 router.get("/chats",getChatPartners )
 router.get("/unreadCount", getUnreadCount)
