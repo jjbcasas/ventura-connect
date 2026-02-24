@@ -9,8 +9,8 @@ export const checkoutSession = async ( req, res ) => {
         const { finalAmount } = req.body
         
         const clientUrl = process.env.NODE_ENV === 'development' 
-        ? 'http://localhost:5173' 
-            : process.env.FRONTEND_URL
+            ? 'http://localhost:5173' 
+            : '/' // process.env.FRONTEND_URL
 
         if (!creator) return res.status(404).json({ message: "Creator not found" })
                 
