@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router()
-import { getUser, postLogin, logout, postSignup, googleLogin} from '../controllers/auth.js'
+import { getUser, postLogin, logout, postSignup, googleLogin, getCheck} from '../controllers/auth.js'
 // import passport from 'passport'
 import dotenv from 'dotenv'
 import path from 'path'
@@ -12,6 +12,7 @@ dotenv.config({ path: './backend/config/.env'})
 router.use(arcjetProtection)
 
 // Auth Routes
+router.get('/health', getCheck )
 router.get('/user', protectRoute , getUser);
 router.post('/login', postLogin);
 router.post('/logout', logout);

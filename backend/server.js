@@ -29,6 +29,7 @@ dotenv.config({ path: './backend/config/.env'})
 connectDB()
 
 const __dirname = path.resolve()
+// Trust the first proxy (e.g., Render, Vercel, Nginx) to allow HTTPS cookies
 app.set('trust proxy', 1)
 
 // static folder

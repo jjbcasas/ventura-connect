@@ -5,28 +5,33 @@ import dotenv from 'dotenv'
 import { generateToken } from '../config/utils.js'
 dotenv.config({ path: './backend/config/.env'})
 
-  // This endpoint would primarily be used to check if a user is already authenticated
-  // when the React app loads or navigates to a protected route.
-  export const getUser = (req, res) => {
-    // No need to autheticated. protectRoute middleware already did the authentication and attached the user object to req.user
-    console.log('User fetched!')
-    return res.status(200).json({
-      isAuthenticated: true,
-      user: {
-        _id: req.user._id,
-        userName: req.user.userName,
-        email: req.user.email,
-        // Include any other non-sensitive user data your frontend needs
-        profileImage: req.user.profileImage,
-        likedPostId: req.user.likedPostId,
-        followingId: req.user.followingId,
-        followerId: req.user.followerId,
-        stripeAccountId: req.user.stripeAccountId,
-        stripeOnboardingComplete: req.user.stripeOnboardingComplete
-      },
-      message: 'User is already logged in.'
-    });
-  }
+// Health Check Controller (UpTimeRobot)
+export const getCheck = ( req, res ) => {
+  res.status(200).send("Server is alive!")
+}
+
+// This endpoint would primarily be used to check if a user is already authenticated
+// when the React app loads or navigates to a protected route.
+export const getUser = (req, res) => {
+  // No need to autheticated. protectRoute middleware already did the authentication and attached the user object to req.user
+  console.log('User fetched!')
+  return res.status(200).json({
+    isAuthenticated: true,
+    user: {
+      _id: req.user._id,
+      userName: req.user.userName,
+      email: req.user.email,
+      // Include any other non-sensitive user data your frontend needs
+      profileImage: req.user.profileImage,
+      likedPostId: req.user.likedPostId,
+      followingId: req.user.followingId,
+      followerId: req.user.followerId,
+      stripeAccountId: req.user.stripeAccountId,
+      stripeOnboardingComplete: req.user.stripeOnboardingComplete
+    },
+    message: 'User is already logged in.'
+  });
+}
   
   // Signup Controller
   export const postSignup = async (req, res, next) => {
