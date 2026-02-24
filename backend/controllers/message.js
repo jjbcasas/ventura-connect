@@ -115,18 +115,18 @@ export const getMessagesByUserId = async ( req, res ) => {
             return res.status(404).json({message: 'Invalid User Id!'})
         }
 
-        const areFriends = await User.exists({
-            _id: myId,
-            // in the future make this bi-directional. Right now its one-directional so it won't feel too restrictive
-            $or: [
-                { followerId: chatPartnerId },
-                { followingId: chatPartnerId }
-            ]
-        })
+        // const areFriends = await User.exists({
+        //     _id: myId,
+        //     // in the future make this bi-directional. Right now its one-directional so it won't feel too restrictive
+        //     $or: [
+        //         { followerId: chatPartnerId },
+        //         { followingId: chatPartnerId }
+        //     ]
+        // })
 
-        if ( !areFriends ) {
-            return res.status(403).json({ message: "Not following the user." }) // 403 - Status Forbidden
-        }
+        // if ( !areFriends ) {
+        //     return res.status(403).json({ message: "Not following the user." }) // 403 - Status Forbidden
+        // }
 
         const messages = await Message.find({ 
             $or: [
@@ -134,7 +134,7 @@ export const getMessagesByUserId = async ( req, res ) => {
                 { senderId: chatPartnerId, receiverId: myId }
             ]
         }).populate('senderId receiverId',"userName profileImage")
-        .sort({ createdAt: -1 }) //oldest to newest
+        .sort({ createdAt: -1 }) // newest to oldest
         .limit(20)
         .lean()
 
