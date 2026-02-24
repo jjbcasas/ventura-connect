@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser'
 // requires dotenv for us to use environment variables
 import dotenv from 'dotenv'
 import path from 'path'
+import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js'
 import feedRoutes from './routes/feed.js'
 import mainRoutes from './routes/main.js'
@@ -28,7 +29,8 @@ dotenv.config({ path: './backend/config/.env'})
 // connect to the Database
 connectDB()
 
-const __dirname = path.resolve()
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // Trust the first proxy (e.g., Render, Vercel, Nginx) to allow HTTPS cookies
 app.set('trust proxy', 1)
 
@@ -69,13 +71,13 @@ app.use('/api/tip', tipRoute)
 
 // Production Static Assets
 if (process.env.NODE_ENV === 'production') {
-    // 1. Establish the absolute path to your frontend dist folder
-    const frontendPath = path.resolve(__dirname, 'frontend', 'dist');
+    // If server.js is in /backend, we go UP (..) then into /frontend/dist
+    const frontendPath = path.join(__dirname, '..', 'frontend', 'dist');
 
-    // 2. Serve static files from that folder
+    console.log("Checking for static files at:", frontendPath);
+
     app.use(express.static(frontendPath));
 
-    // 3. Handle SPA routing (MUST be the very last route in the file)
     app.get('*', (req, res) => {
         res.sendFile(path.join(frontendPath, 'index.html'));
     });
