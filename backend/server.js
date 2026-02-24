@@ -11,7 +11,6 @@ import cookieParser from 'cookie-parser'
 // requires dotenv for us to use environment variables
 import dotenv from 'dotenv'
 import path from 'path'
-import { fileURLToPath } from 'url';
 import { connectDB } from './config/database.js'
 import feedRoutes from './routes/feed.js'
 import mainRoutes from './routes/main.js'
@@ -29,8 +28,7 @@ dotenv.config({ path: './backend/config/.env'})
 // connect to the Database
 connectDB()
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.resolve()
 // Trust the first proxy (e.g., Render, Vercel, Nginx) to allow HTTPS cookies
 app.set('trust proxy', 1)
 
@@ -70,17 +68,11 @@ app.use('/api/messages', messageRoutes)
 app.use('/api/tip', tipRoute)
 
 // Production Static Assets
-if (process.env.NODE_ENV === 'production') {
-    // If server.js is in /backend, we go UP (..) then into /frontend/dist
-    const frontendPath = path.join(__dirname, '..', 'frontend', 'dist');
-
-    console.log("Checking for static files at:", frontendPath);
-
-    app.use(express.static(frontendPath));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(frontendPath, 'index.html'));
-    });
+if ( process.env.NODE_ENV === 'production' ) {
+    app.use(express.static(path.join(__dirname, '/frontend/dist')))
+    app.get('/*path', (req, res) => {
+        res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'))
+    })
 }
 
 // Creates the http.createServer() for you behind the scenes. It's a shortcut.
