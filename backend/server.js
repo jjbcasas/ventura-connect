@@ -68,11 +68,17 @@ app.use('/api/messages', messageRoutes)
 app.use('/api/tip', tipRoute)
 
 // Production Static Assets
-if ( process.env.NODE_ENV === 'production' ) {
-    app.use(express.static(path.join(__dirname, '/frontend/dist')))
-    app.get('/*path', (req, res) => {
-        res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'))
-    })
+if (process.env.NODE_ENV === 'production') {
+    // 1. Establish the absolute path to your frontend dist folder
+    const frontendPath = path.resolve(__dirname, 'frontend', 'dist');
+
+    // 2. Serve static files from that folder
+    app.use(express.static(frontendPath));
+
+    // 3. Handle SPA routing (MUST be the very last route in the file)
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    });
 }
 
 // Creates the http.createServer() for you behind the scenes. It's a shortcut.
