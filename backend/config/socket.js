@@ -12,10 +12,9 @@ const userSocketMap = {}
 
 const io = new Server(server, {
     cors: {
-        origin: [
-            'http://localhost:5173',
-            process.env.BACKEND_URL
-            ],
+        origin: process.env.NODE_ENV ==='production'
+            ? false
+            : "http://localhost:5173",
         credentials: true
     }
 })

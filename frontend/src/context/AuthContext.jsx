@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true); // Very important!
   const [ socket, setSocket ] = useState(null)
   const [ onlineUsers, setOnlineUser ] = useState([])
+  const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   
   // Function for Socket Connection
   const connectSocket = useCallback( () => {
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }) => {
       // If an old socket exists but is disconnected, clean it up first
       if ( prevSocket ) prevSocket.disconnect()
       // Initialize the socket
-      const newSocket = io("http://localhost:5000", {
+      const newSocket = io( SOCKET_URL , {
         withCredentials: true
       })
       return newSocket
