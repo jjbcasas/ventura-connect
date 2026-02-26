@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true); // Very important!
   const [ socket, setSocket ] = useState(null)
   const [ onlineUsers, setOnlineUser ] = useState([])
-  const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const SOCKET_URL = import.meta.env.PROD ? import.meta.env.VITE_BACKEND_URL : "http://localhost:5000";
   
   // Function for Socket Connection
   const connectSocket = useCallback( () => {
