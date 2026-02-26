@@ -16,7 +16,8 @@ const io = new Server(server, {
             ? "https://ventura-connect.onrender.com" // false
             : "http://localhost:5173",
         credentials: true
-    }
+    },
+    transports: ["websocket"]
 })
 
 // Apply authentication middleware to all socket connection
