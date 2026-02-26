@@ -31,9 +31,7 @@ export const AuthProvider = ({ children }) => {
       if ( prevSocket ) prevSocket.disconnect()
       // Initialize the socket
       const newSocket = io( SOCKET_URL , {
-        withCredentials: true,
-        transports: ["websocket"], // Force WebSocket only, skip polling
-        upgrade: false
+        withCredentials: true
       })
       return newSocket
     } )
