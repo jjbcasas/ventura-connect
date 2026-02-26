@@ -13,7 +13,7 @@ const userSocketMap = {}
 const io = new Server(server, {
     cors: {
         origin: process.env.NODE_ENV ==='production'
-            ? false
+            ? "https://ventura-connect.onrender.com" // false
             : "http://localhost:5173",
         credentials: true
     }
