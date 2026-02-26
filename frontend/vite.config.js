@@ -10,8 +10,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000/api',
-        // target: 'https://react-ventura-connect-backend.vercel.app',
+        // target: 'http://localhost:5000/api',
+        target: 'https://ventura-connect.onrender.com/api',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       }
