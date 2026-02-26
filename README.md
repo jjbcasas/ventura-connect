@@ -4,7 +4,7 @@
  <img src="https://github.com/jjbcasas/react-ventura-connect/blob/main/ventura-connect.GIF"
  </a>
 </div>
-   A full-stack social media app with a React (via Vite) frontend and a Node.js/Express.js backend enabling users to connect and share content. It features user authentication (email/password and Google OAuth) for secure account creation and log in. Allows users to browse posts, upload photos for profiles and new posts, and interact with others by following profiles, liking and commenting on posts.
+   A social media app enabling users to connect and share content with real-time chat and creator tipping via Stripe. I integrated WebSockets (Socket.io) for the chat feature, implemented monetization and payments using Stripe, and incorporated Google Cloud Vision API for NSFW post moderation. The platform also features secure user authentication (email/password and Google OAuth) for account creation and log in. Allows users to browse posts, upload photos for profiles and new posts, and interact with others by following profiles, liking and commenting on posts.
    
 # 💻 Tech Stack:
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
