@@ -10,7 +10,7 @@ export const checkoutSession = async ( req, res ) => {
         
         const clientUrl = process.env.NODE_ENV === 'development' 
             ? 'http://localhost:5173' 
-            : '/' // process.env.FRONTEND_URL
+            : 'https://ventura-connect.onrender.com' // '/' or process.env.FRONTEND_URL
 
         if (!creator) return res.status(404).json({ message: "Creator not found" })
                 
@@ -80,7 +80,7 @@ export const createConnectAccount = async ( req, res ) => {
         const user = await User.findById(userId)
         const clientUrl = process.env.NODE_ENV === 'development' 
             ? 'http://localhost:5173' 
-            : '/' // process.env.FRONTEND_URL
+            : 'https://ventura-connect.onrender.com' // '/' or process.env.FRONTEND_URL
 
         if (!user) return res.status(404).json({ message: "User not found" });
 
