@@ -15,6 +15,7 @@ const io = new Server(server, {
         origin: process.env.NODE_ENV ==='production'
             ? "https://ventura-connect.onrender.com" // false
             : "http://localhost:5173",
+        methods: ["GET", "POST"],
         credentials: true
     },
     transports: ["websocket"]
