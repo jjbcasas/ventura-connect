@@ -39,7 +39,13 @@ Run the frontend:<br>
     - API SECRET = `your cloudinary api secret`
     - GOOGLE_CLIENT_ID = `your google client id`
     - GOOGLE_CLIENT_SECRET = `your google client secret`
-    - FRONTEND_URL= `your frontend port number`
     - BACKEND_URL= `your backend port number`
+    - NODE_ENV=development
+    - ARCJET_KEY=`your arcjet key`
+    - ARCJET_ENV=development
+    - JWT_SECRET=`your jwt secret`
+    - STRIPE_SECRET_KEY=`your stripe secret key`
+    - STRIPE_WEBHOOK_SECRET=`your stripe webhook secret`
   - Create .env file in your frontend folder add the value of your port or host
-    - VITE_REACT_APP_BACKEND_BASEURL = `your backend port number`
+    - VITE_BACKEND_URL = `your backend port number`
+    - VITE_GOOGLE_CLIENT_ID = `your google client id`
